@@ -7,9 +7,7 @@ redis-notifications
 
 A redis based notification engine. It implements the rsmq-worker to savely create notifications and recurring reports
 
-*Written in coffee-script*
-
-**INFO: all examples are written in coffee-script**
+# !! Currently under development !!
 
 ## Install
 

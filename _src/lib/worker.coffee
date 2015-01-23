@@ -1,4 +1,4 @@
-# # RedisNotifications
+## # Worker
 # ### extends [NPM:MPBasic](https://cdn.rawgit.com/mpneuried/mpbaisc/master/_docs/index.coffee.html)
 #
 # ### Exports: *Class*
@@ -6,15 +6,16 @@
 # Main Module to init the notifications to redis
 # 
 
-# **internal modules**
-# [RNWorker](./worker.coffee.html)
-Worker = require( "./worker" ) 
+# **npm modules**
+# [NPM:rsmq-worker](https://cdn.rawgit.com/mpneuried/rsmq-worker/master/_docs/README.md.html)
+RSMQWorker = require( "rsmq-worker" ) 
 
-class RedisNotifications extends require( "mpbasic" )()
+class RNWorker extends require( "mpbasic" )()
 
 	# ## defaults
 	default: =>
 		@extend super, 
+
 			# **options.queuename** *String* The queuename to use for the worker
 			queuename: "notifications"
 			# **options.interval** *Number[]* An Array of increasing wait times in seconds
@@ -36,18 +37,30 @@ class RedisNotifications extends require( "mpbasic" )()
 	###
 	constructor: ( options )->
 		super
-		@worker = new RSMQWorker( @config.queuename, @config )
+
+		@worker = new RSMQWorker @config.queuename,
+			interval: @config.interval
+			customExceedCheck: @_customExceedCheck
+
+			redis: @config.client
+			redisPrefix: @config.prefix
+			host: @config.host
+			port: @config.port
+			options: @config.options
 
 		@start()
 		# wrap start method to only be active until the connection is established
-		@start = @_waitUntil( @_start, "connected" )
+		@start = @_waitUntil( @_start, "ready", @worker )
 		return
 
 	_start: =>
-		@worker.on "message", @
-
 		@debug "START"
 		return
 
+	_customExceedCheck: ( msg )=>
+		if msg.message is "check"
+			return true
+		return false
+
 #export this class
-module.exports = RedisNotifications
+module.exports = new RNWorker()
