@@ -1,4 +1,4 @@
-## # Worker
+## # RNWorker
 # ### extends [NPM:MPBasic](https://cdn.rawgit.com/mpneuried/mpbaisc/master/_docs/index.coffee.html)
 #
 # ### Exports: *Class*
@@ -13,7 +13,7 @@ RSMQWorker = require( "rsmq-worker" )
 class RNWorker extends require( "mpbasic" )()
 
 	# ## defaults
-	default: =>
+	defaults: =>
 		@extend super, 
 
 			# **options.queuename** *String* The queuename to use for the worker
@@ -36,8 +36,8 @@ class RNWorker extends require( "mpbasic" )()
 	## constructor 
 	###
 	constructor: ( options )->
+		@ready = false
 		super
-
 		@worker = new RSMQWorker @config.queuename,
 			interval: @config.interval
 			customExceedCheck: @_customExceedCheck
@@ -48,13 +48,21 @@ class RNWorker extends require( "mpbasic" )()
 			port: @config.port
 			options: @config.options
 
-		@start()
 		# wrap start method to only be active until the connection is established
-		@start = @_waitUntil( @_start, "ready", @worker )
+		@worker.on "ready", @_start
+
+		@worker.on "message", @_onMessage
+
+		@worker.on "timeout", ( msg )=>
+			@warning "task timeout", msg
+			return
+
+		@worker.start()
 		return
 
 	_start: =>
-		@debug "START"
+		@ready = true
+		@emit "ready"
 		return
 
 	_customExceedCheck: ( msg )=>
@@ -62,5 +70,44 @@ class RNWorker extends require( "mpbasic" )()
 			return true
 		return false
 
+	_doCheck: ( next )=>
+		# TODO implement teh check method
+		next()
+		return 
+
+	send: ( type, msg, cb )=>
+		@debug "send", type, msg
+		@worker.send( JSON.stringify( mt: type, md: msg ), cb )
+		return
+
+	_onMessage: ( msg, next, id )=>
+		@debug "_onMessage", msg
+
+		if msg is "check"
+			@_doCheck( next )
+			return
+
+		# dispatch the message
+		_data = JSON.parse( msg )
+		try
+			@emit _data.mt, _data.md, next, id
+		catch _err
+			@error "execute message", _err, _err.stack
+
+			next( false )
+			return
+
+		return
+
+	getRsmq: =>
+		return @worker._getRsmq()
+
+	getRedisNamespace: =>
+		return @getRsmq().redisns
+
+	getRedis: =>
+		return @getRsmq().redis
+
+
 #export this class
-module.exports = new RNWorker()
+module.exports = RNWorker

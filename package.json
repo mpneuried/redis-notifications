@@ -25,7 +25,10 @@
   "dependencies": {
     "mpbasic": "0.0.x",
     "rsmq-worker": "0.1.x",
-    "lodash": "2.4.x"
+    "lodash": "3.0.x",
+    "moment-timezone": "0.3.x",
+    "sanitizer": "~0.1.2",
+    "htmlstrip-native": "0.0.6"
   },
   "devDependencies": {
     "should": "4.3.x",

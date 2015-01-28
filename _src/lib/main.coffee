@@ -9,14 +9,29 @@
 # **internal modules**
 # [RNWorker](./worker.coffee.html)
 Worker = require( "./worker" ) 
+# [RNTasks](./tasks.coffee.html)
+Tasks = require( "./tasks" ) 
+# [RNMailBuffer](./mailbuffer.coffee.html)
+MailBuffer = require( "./mailbuffer" ) 
+
+# [validateCreator](./schemas/creator.coffee.html)
+validateCreator = require( "./schemas/creator" )
+# [validateMultiCreate](./schemas/create-multi.coffee.html)
+validateMultiCreate = require( "./schemas/create-multi" )
+# [validateSingleCreate](./schemas/create-single.coffee.html)
+validateSingleCreate = require( "./schemas/create-single" )
+
+# ** configurations**
+# **RequiredEvents** *String[]* A list of events that has to be binded to this module
+RequiredEvents = [ "readUser", "getContent", "createNotification", "sendMail", "error" ]
 
 class RedisNotifications extends require( "mpbasic" )()
 
 	# ## defaults
-	default: =>
+	defaults: =>
 		@extend super, 
 			# **options.queuename** *String* The queuename to use for the worker
-			queuename: "notifications"
+			queuename: "rnqueue"
 			# **options.interval** *Number[]* An Array of increasing wait times in seconds
 			interval: [ 0, 1, 5, 10 ]
 
@@ -35,19 +50,75 @@ class RedisNotifications extends require( "mpbasic" )()
 	## constructor 
 	###
 	constructor: ( options )->
+		@ready = false
 		super
-		@worker = new RSMQWorker( @config.queuename, @config )
+		@worker = new Worker( @config )
+		@mailbuffer = new MailBuffer( @, @config )
+		@tasks = new Tasks( @, @config )
 
-		@start()
 		# wrap start method to only be active until the connection is established
-		@start = @_waitUntil( @_start, "connected" )
+		@init = @_waitUntil( @_init, "ready", @worker )
 		return
 
-	_start: =>
-		@worker.on "message", @
+	_init: =>
+		if @ready
+			return
 
-		@debug "START"
+		@_checkListeners()
+
+		@ready = true
+		@emit "ready"
 		return
+
+	_checkListeners: =>
+		for evnt in RequiredEvents when not @listeners( evnt ).length
+			@_handleError( null, "EMISSINGLISTENER", evname: evnt )
+
+		return
+
+	createMulti: ( creator, options, cb = true )=>
+		_verrC =  validateCreator( creator, cb )
+		_verrM = validateMultiCreate( options, cb )
+		if _verrC? or _verrM?
+			@emit "error", ( _verrC or _verrM )
+			return
+
+		options.creator = creator
+
+		@worker.send( "crNfcns", options )
+		return
+
+	create: ( creator, options, cb = true )=>
+		_verrC =  validateCreator( creator, cb )
+		_verrS = validateSingleCreate( options, cb )
+		if _verrC? or _verrS?
+			@emit "error", ( _verrC or _verrS )
+			return
+
+		options.creator = creator
+
+		@worker.send( "crNfcn", options )
+		return
+
+	getWorker: =>
+		return @worker
+
+	getMailbuffer: =>
+		return @mailbuffer
+
+	getRsmq: =>
+		return @worker.getRsmq()
+
+	getRedis: =>
+		return @worker.getRedis()
+
+	getRedisNamespace: =>
+		return @worker.getRedisNamespace()
+
+
+	ERRORS: =>
+		return @extend {}, super, 
+			"EMISSINGLISTENER": [ 404, "Missing Event Listener. Please make sure you've added a event listener to `<%= evname %>`" ]
 
 #export this class
 module.exports = RedisNotifications

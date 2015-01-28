@@ -59,7 +59,7 @@ module.exports = (grunt) ->
 		docker:
 			serverdocs:
 				expand: true
-				src: ["_src/**/*.coffee", "README.md"]
+				src: ["_src/**/*.coffee", "README.md", "_docs/*.md"]
 				dest: "_docs/"
 				options:
 					onlyUpdated: false
