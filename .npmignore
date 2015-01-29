@@ -1,3 +1,10 @@
 /_src
 /_docs
+/node_modules
 Gruntfile.*
+*.sublime*
+config.json
+config*.json
+deploy.json
+.editorconfig
+.travis.yml

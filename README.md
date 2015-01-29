@@ -5,9 +5,12 @@ redis-notifications
 [![Build Status](https://david-dm.org/mpneuried/redis-notifications.png)](https://david-dm.org/mpneuried/redis-notifications)
 [![NPM version](https://badge.fury.io/js/redis-notifications.png)](http://badge.fury.io/js/redis-notifications)
 
+# !! Currently under heavy development !!
+
 A redis based notification engine. It implements the rsmq-worker to savely create notifications and recurring reports
 
-# !! Currently under development !!
+[![NPM](https://nodei.co/npm/redis-notifications.png?downloads=true&stars=true)](https://nodei.co/npm/redis-notifications/)
+
 
 ## Install
 
@@ -33,7 +36,26 @@ A redis based notification engine. It implements the rsmq-worker to savely creat
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
-|0.0.1|2015-1-23|Initial commit|
+|0.0.1|2015-1-29|Initial version. No tests and docs until now!|
+
+[![NPM](https://nodei.co/npm-dl/redis-notifications.png?months=6)](https://nodei.co/npm/redis-notifications/)
+
+> Initially Generated with [generator-mpnodemodule](https://github.com/mpneuried/generator-mpnodemodule)
+
+## Other projects
+
+|Name|Description|
+|:--|:--|
+|[**rsmq**](https://github.com/smrchy/rsmq)|A really simple message queue based on Redis|
+|[**node-cache**](https://github.com/tcs-de/nodecache)|Simple and fast NodeJS internal caching. Node internal in memory cache like memcached.|
+|[**redis-sessions**](https://github.com/smrchy/redis-sessions)|An advanced session store for NodeJS and Redis|
+|[**connect-redis-sessions**](https://github.com/mpneuried/connect-redis-sessions)|A connect or express middleware to simply use the [redis sessions](https://github.com/smrchy/redis-sessions). With [redis sessions](https://github.com/smrchy/redis-sessions) you can handle multiple sessions per user_id.|
+|[**systemhealth**](https://github.com/mpneuried/systemhealth)|Node module to run simple custom checks for your machine or it's connections. It will use [redis-heartbeat](https://github.com/mpneuried/redis-heartbeat) to send the current state to redis.|
+|[**task-queue-worker**](https://github.com/smrchy/task-queue-worker)|A powerful tool for background processing of tasks that are run by making standard http requests.|
+|[**soyer**](https://github.com/mpneuried/soyer)|Soyer is small lib for serverside use of Google Closure Templates with node.js.|
+|[**grunt-soy-compile**](https://github.com/mpneuried/grunt-soy-compile)|Compile Goggle Closure Templates ( SOY ) templates inclding the handling of XLIFF language files.|
+|[**backlunr**](https://github.com/mpneuried/backlunr)|A solution to bring Backbone Collections together with the browser fulltext search engine Lunr.js|
+
 
 ## The MIT License (MIT)
 

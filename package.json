@@ -16,7 +16,8 @@
     "url": "https://github.com/mpneuried/redis-notifications.git"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "prepublish": "grunt build-dev"
   },
   "engines": {
     "node": ">= 0.10.0"
