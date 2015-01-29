@@ -1,4 +1,4 @@
-module.exports = new ( class CreateMutliSchema extends require( "./schema" ) )(
+module.exports = new ( class CreateMutliSchema extends require( "obj-schema" ) )(
 	type: 
 		type: "string"
 		required: true

@@ -1,6 +1,6 @@
 {
   "name": "redis-notifications",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A redis based notification engine. It implements the rsmq-worker to savely create notifications and recurring reports",
   "keywords": [],
   "homepage": "https://github.com/mpneuried/redis-notifications",
@@ -24,11 +24,10 @@
   "license": "MIT",
   "dependencies": {
     "mpbasic": "0.0.x",
-    "rsmq-worker": "0.1.x",
+    "rsmq-worker": "0.2.x",
     "lodash": "3.0.x",
     "moment-timezone": "0.3.x",
-    "sanitizer": "0.1.x",
-    "htmlstrip-native": "0.0.x"
+    "obj-schema": "0.0.x"
   },
   "devDependencies": {
     "should": "4.3.x",

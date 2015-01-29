@@ -1,4 +1,4 @@
-module.exports = new ( class UserSchema extends require( "./schema" ) )(
+module.exports = new ( class UserSchema extends require( "obj-schema" ) )(
 	id: 
 		required: true
 

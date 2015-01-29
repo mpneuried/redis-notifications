@@ -335,7 +335,7 @@
 <a class="line-num" href="#line-78" id="line-78">78</a>      <span class="k">return</span>
 <a class="line-num" href="#line-79" id="line-79">79</a>  
 <a class="line-num" href="#line-80" id="line-80">80</a>    <span class="nv">createMulti: </span><span class="nf">( creator, options, cb = true )=&gt;</span>
-<a class="line-num" href="#line-81" id="line-81">81</a>      <span class="nv">_verrC = </span> <span class="nx">validateCreator</span><span class="p">(</span> <span class="nx">creator</span><span class="p">,</span> <span class="nx">cb</span> <span class="p">)</span>
+<a class="line-num" href="#line-81" id="line-81">81</a>      <span class="nv">_verrC = </span><span class="nx">validateCreator</span><span class="p">(</span> <span class="nx">creator</span><span class="p">,</span> <span class="nx">cb</span> <span class="p">)</span>
 <a class="line-num" href="#line-82" id="line-82">82</a>      <span class="nv">_verrM = </span><span class="nx">validateMultiCreate</span><span class="p">(</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">cb</span> <span class="p">)</span>
 <a class="line-num" href="#line-83" id="line-83">83</a>      <span class="k">if</span> <span class="nx">_verrC</span><span class="o">?</span> <span class="o">or</span> <span class="nx">_verrM</span><span class="o">?</span>
 <a class="line-num" href="#line-84" id="line-84">84</a>        <span class="nx">@emit</span> <span class="s">&quot;error&quot;</span><span class="p">,</span> <span class="p">(</span> <span class="nx">_verrC</span> <span class="o">or</span> <span class="nx">_verrM</span> <span class="p">)</span>
@@ -366,7 +366,7 @@
 <a class="line-num" href="#line-109" id="line-109">109</a>  
 <a class="line-num" href="#line-110" id="line-110">110</a>    <span class="nv">getRsmqWorker: </span><span class="o">=&gt;</span>
 <a class="line-num" href="#line-111" id="line-111">111</a>      <span class="k">return</span> <span class="nx">@worker</span><span class="p">.</span><span class="nx">getRsmqWorker</span><span class="p">()</span>
-<a class="line-num" href="#line-112" id="line-112">112</a>      
+<a class="line-num" href="#line-112" id="line-112">112</a>  
 <a class="line-num" href="#line-113" id="line-113">113</a>    <span class="nv">getRsmq: </span><span class="o">=&gt;</span>
 <a class="line-num" href="#line-114" id="line-114">114</a>      <span class="k">return</span> <span class="nx">@worker</span><span class="p">.</span><span class="nx">getRsmq</span><span class="p">()</span>
 <a class="line-num" href="#line-115" id="line-115">115</a>  

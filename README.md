@@ -36,6 +36,7 @@ A redis based notification engine. It implements the rsmq-worker to savely creat
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
+|0.0.2|2015-1-29|moved schema to extra module `obj-schema`|
 |0.0.1|2015-1-29|Initial version. No tests and docs until now!|
 
 [![NPM](https://nodei.co/npm-dl/redis-notifications.png?months=6)](https://nodei.co/npm/redis-notifications/)
@@ -49,6 +50,7 @@ A redis based notification engine. It implements the rsmq-worker to savely creat
 |[**rsmq**](https://github.com/smrchy/rsmq)|A really simple message queue based on Redis|
 |[**rsmq-worker**](https://github.com/mpneuried/rsmq-worker)|Helper to simply implement a worker [RSMQ ( Redis Simple Message Queue )](https://github.com/smrchy/rsmq).|
 |[**node-cache**](https://github.com/tcs-de/nodecache)|Simple and fast NodeJS internal caching. Node internal in memory cache like memcached.|
+|[**obj-schema**](https://github.com/tcs-de/obj-schema)|Simple module to validate an object by a predefined schema|
 |[**redis-sessions**](https://github.com/smrchy/redis-sessions)|An advanced session store for NodeJS and Redis|
 |[**connect-redis-sessions**](https://github.com/mpneuried/connect-redis-sessions)|A connect or express middleware to simply use the [redis sessions](https://github.com/smrchy/redis-sessions). With [redis sessions](https://github.com/smrchy/redis-sessions) you can handle multiple sessions per user_id.|
 |[**systemhealth**](https://github.com/mpneuried/systemhealth)|Node module to run simple custom checks for your machine or it's connections. It will use [redis-heartbeat](https://github.com/mpneuried/redis-heartbeat) to send the current state to redis.|

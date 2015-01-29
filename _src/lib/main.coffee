@@ -77,7 +77,7 @@ class RedisNotifications extends require( "mpbasic" )()
 		return
 
 	createMulti: ( creator, options, cb = true )=>
-		_verrC =  validateCreator( creator, cb )
+		_verrC = validateCreator( creator, cb )
 		_verrM = validateMultiCreate( options, cb )
 		if _verrC? or _verrM?
 			@emit "error", ( _verrC or _verrM )
@@ -108,7 +108,7 @@ class RedisNotifications extends require( "mpbasic" )()
 
 	getRsmqWorker: =>
 		return @worker.getRsmqWorker()
-		
+
 	getRsmq: =>
 		return @worker.getRsmq()
 

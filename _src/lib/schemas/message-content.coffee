@@ -1,7 +1,7 @@
 # [utils](./utils.coffee.html)
 utils = require( "../utils" ) 
 
-module.exports = new ( class MessageContentSchema extends require( "./schema" ) )(
+module.exports = new ( class MessageContentSchema extends require( "obj-schema" ) )(
 	subject: 
 		type: "string"
 		required: true
