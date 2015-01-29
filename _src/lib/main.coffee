@@ -106,6 +106,9 @@ class RedisNotifications extends require( "mpbasic" )()
 	getMailbuffer: =>
 		return @mailbuffer
 
+	getRsmqWorker: =>
+		return @worker.getRsmqWorker()
+		
 	getRsmq: =>
 		return @worker.getRsmq()
 

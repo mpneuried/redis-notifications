@@ -29,6 +29,8 @@ class RNTasks extends require( "mpbasic" )()
 		@worker.on "crNfcn", @createNotification
 		@worker.on "chShdl", @checkSchedule
 		@worker.on "sndMsg", @sendMail
+		@worker.on "crMsg", @composeMessageReport
+		@worker.on "checkMailBuffer", @checkMailBuffer
 		super
 
 	checkSchedule: ( data, next )=>
@@ -64,15 +66,74 @@ class RNTasks extends require( "mpbasic" )()
 			return
 		return
 
+	checkMailBuffer: =>
+		@mailbuffer.listUsers ( err, users )=>
+			if err
+				@error "checkMailBuffer:listusers", err
+				return
+			@debug "checkMailBuffer:listUsers", users
+			for user_id in users
+				@worker.send( "crMsg", user: user_id )
+			return
+		return
+
+	composeMessageReport: ( data, next )=>
+		uid = data.user
+		@mailbuffer.userMsgs uid, ( err, msgs )=>
+			if err
+				@main.emit "error", err
+				@warning "composeMessageReport", err
+				next( false )
+				return
+			@debug "composeMessageReport", msgs
+			if not msgs.length
+				@warning "User with no messgaes"
+				@mailbuffer.removeUser uid, 0, ( err )=>
+					if err
+						@main.emit "error", err
+						@warning "sendMail", err
+						next( false )
+						return
+					next()
+					return
+				return
+
+			# get the userdata out of the first and newest message
+			userdata = msgs[ 0 ].userdata
+			@worker.send "sndMsg", { user: userdata, messages: _.pluck( msgs, "message" ), composed: true }, ( err )=>
+				if err
+					@main.emit "error", err
+					@warning "getMessageContent:sndMsg", err
+					next( false )
+					return
+				next()
+				return
+			return
+		return
+
 	sendMail: ( data, next )=>
 		#@info "sendMail", data
-		@main.emit "sendMail", data.userdata, data.messages, data.additional, ( err )=>
+		@main.emit "sendMail", data.user, data.messages, data.composed, ( err )=>
 			if err
 				@main.emit "error", err
 				@warning "sendMail", err
 				next( false )
 				return
-			next()
+
+			if not data.composed
+				# if it's an immediate send
+				next()
+				return
+
+			# on composed send remove the data after successful send
+			@mailbuffer.removeUser data.user.id, data.messages.length, ( err )=>
+				if err
+					@main.emit "error", err
+					@warning "sendMail:removeUser", err
+					next( false )
+					return
+				next()
+				return
 			return
 		return
 
@@ -113,15 +174,18 @@ class RNTasks extends require( "mpbasic" )()
 					return
 				
 				data.userdata = userdata
-				
 
 				# Send immediately if sendInterval ist set to i (immediately) or p (only prio)
 				if userdata.sendInterval in [ "i", "p" ]
 
-					data.messages = [ message ]
-
-					@worker.send( "sndMsg", data )
-					next()
+					@worker.send "sndMsg", { user: userdata, messages: [ message ], composed: false }, ( err )=>
+						if err
+							@main.emit "error", err
+							@warning "getMessageContent:sndMsg", err
+							next( false )
+							return
+						next()
+						return
 					return
 
 				data.message = message

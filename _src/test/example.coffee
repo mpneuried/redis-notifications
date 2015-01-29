@@ -10,7 +10,8 @@ nf.init()
 # Hooks
 
 nf.on "error", ( err )->
-	console.log "\n\n --- EXAMPLE - READ USER --- \n", err, "\n --- \n\n"
+	console.log "\n\n --- EXAMPLE - READ USER --- \n", err, err.stack, "\n --- \n\n"
+
 	console.trace()
 	return
 
@@ -59,8 +60,8 @@ nf.on "createNotification", ( user, creator, message, additional, cb )=>
 	cb( null )
 	return
 
-nf.on "sendMail", ( user, messages, additional, cb )=>
-	console.log "\n\n --- EXAMPLE - SEND MAIL --- \nIDs", _.pluck( messages, "id" ), "\n --- \nUSER:", user, "\n --- \nMSG:", messages, "\n --- \nADDITIONAL:", additional, "\n --- \n\n"
+nf.on "sendMail", ( user, messages, isReport, cb )=>
+	console.log "\n\n --- EXAMPLE - SEND MAIL --- \nIDs", _.pluck( messages, "id" ), "\n --- \nUSER:", user, "\n --- \nMSG:", messages,"\n --- \nISREPORT:", isReport, "\n --- \n\n"
 	cb( null )
 	return
 
@@ -95,6 +96,8 @@ nf.create _creator, _optionsSingle, ( err, data )=>
 	console.log "\n\n --- EXAMPLE - create --- \n", err, data, "\n --- \n\n"
 	return
 
+
+#nf.getRsmqWorker().send( "check", 30 )
 
 # Init and start the module
 nf.init()

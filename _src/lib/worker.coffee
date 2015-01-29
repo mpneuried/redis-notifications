@@ -71,8 +71,8 @@ class RNWorker extends require( "mpbasic" )()
 		return false
 
 	_doCheck: ( next )=>
-		# TODO implement teh check method
-		next()
+		next( false )
+		@emit "checkMailBuffer"
 		return 
 
 	send: ( type, msg, cb )=>
@@ -98,6 +98,9 @@ class RNWorker extends require( "mpbasic" )()
 			return
 
 		return
+
+	getRsmqWorker: =>
+		return @worker
 
 	getRsmq: =>
 		return @worker._getRsmq()

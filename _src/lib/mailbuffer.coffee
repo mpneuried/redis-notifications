@@ -19,6 +19,8 @@ class RNMailBuffer extends require( "mpbasic" )()
 		@extend super, 
 			keyUserlist: "users_with_messages"
 			keyMsgsPrefix: "msgs"
+
+			maxBufferReadCount: 100
 			# **options.prefix** *String* A general redis prefix
 			prefix: "notifications"
 
@@ -27,9 +29,12 @@ class RNMailBuffer extends require( "mpbasic" )()
 	###
 	constructor: ( @main, options )->
 		@ready = false
+
+
 		super
 
 		@write = @_waitUntil( @_write )
+		@listUsers = @_waitUntil( @_listUsers )
 
 		@main.on "ready", @_start
 		return
@@ -41,7 +46,6 @@ class RNMailBuffer extends require( "mpbasic" )()
 		return
 
 	_write: ( data, cb )=>
-		console.log "WRITE 2 BUFFER", data
 		@_getRedisTime ( err, sec, ms )=>
 			if err
 				cb( err )
@@ -64,6 +68,62 @@ class RNMailBuffer extends require( "mpbasic" )()
 
 		return
 
+	_listUsers: ( cb )=>
+		@_calcCheckTime ( err, ts )=>
+			if err
+				cb( err )
+				return
+			@debug "_listUsers:ts", ts
+			@redis.zrangebyscore( @_getKey( @config.keyUserlist ), 0, ts, "LIMIT", 0, @config.maxBufferReadCount, cb )
+			return
+		return
+
+	userMsgs: ( uid, cb )=>
+		@redis.lrange @_getKey( @config.keyMsgsPrefix, uid ), 0, -1, ( err, msgs )=>
+			if err
+				cb( err )
+				return
+			try
+				# concat the messages simulate a array and do a single parse
+				cb( null, JSON.parse( "[" + msgs.join( "," ) + "]" ) )
+			catch _err
+				cb( _err )
+			return
+		return
+
+	removeUser: ( args..., cb )=>
+		[ uid, count ] = args
+		if not count?
+			_range = [ -1, 0 ]
+		else
+			_range = [ 0, ( ( count + 1 ) * -1 ) ]
+		
+		rM = []
+		rM.push( [ "ZREM", @_getKey( @config.keyUserlist ), uid ] )
+		if not count? or count > 0
+			# only relevent if count is undefined or gt 0
+			rM.push( [ "LTRIM", @_getKey( @config.keyMsgsPrefix, uid ), _range[ 0 ], _range[ 1 ] ] )
+		@redis.multi( rM ).exec ( err, results )=>
+			if err
+				cb( err )
+				return
+			cb()
+			return
+		return
+
+	_calcCheckTime: ( cb )=>
+		@_getRedisTime ( err, sec, ms )=>
+			if err
+				cb( err )
+				return
+			_n = moment(ms)
+			_last10Min = ( Math.floor( _n.minute()/10  ) * 10 )
+			_n.minutes( _last10Min ).seconds( 1 ).milliseconds( 0 )
+
+			cb( null, _n.valueOf() )
+			return 
+		return
+
 	_calcSendAt: ( now, interval, timezone="CET" )=>
 		type = interval[0]
 		# handle daily
@@ -75,8 +135,12 @@ class RNMailBuffer extends require( "mpbasic" )()
 
 			if _next <= _m
 				_next.add( 1, "d" )
-			    
+
+			# DEBUGGING
+			_next.add( -1, "d" )
+
 			return _next.valueOf()
+
 
 	###
 	## _getKey

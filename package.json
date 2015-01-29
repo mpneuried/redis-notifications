@@ -27,17 +27,17 @@
     "rsmq-worker": "0.1.x",
     "lodash": "3.0.x",
     "moment-timezone": "0.3.x",
-    "sanitizer": "~0.1.2",
-    "htmlstrip-native": "0.0.6"
+    "sanitizer": "0.1.x",
+    "htmlstrip-native": "0.0.x"
   },
   "devDependencies": {
     "should": "4.3.x",
     "grunt": "0.4.x",
-    "grunt-regarde": "*",
-    "grunt-contrib-coffee": "*",
-    "grunt-include-replace": "*",
-    "grunt-mocha-cli": "*",
-    "grunt-docker": "0.0.x",
-    "grunt-contrib-clean": "*"
+    "grunt-regarde": "0.1.x",
+    "grunt-contrib-coffee": "0.x",
+    "grunt-include-replace": "2.x",
+    "grunt-mocha-cli": "1.x",
+    "grunt-docker": "0.x",
+    "grunt-contrib-clean": "0.x"
   }
 }
