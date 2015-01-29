@@ -263,19 +263,8 @@
 <a class="line-num" href="#line-72" id="line-72">72</a>      <span class="k">return</span> <span class="kc">false</span>
 <a class="line-num" href="#line-73" id="line-73">73</a>  
 <a class="line-num" href="#line-74" id="line-74">74</a>    <span class="nv">_doCheck: </span><span class="nf">( next )=&gt;</span>
-<a class="line-num" href="#line-75" id="line-75">75</a>  
-<a class="line-num" href="#line-76" id="line-76">76</a>  </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
-</div>
-<p>TODO implement teh check method</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><a class="line-num" href="#line-75" id="line-75">75</a>  
-<a class="line-num" href="#line-76" id="line-76">76</a>      <span class="nx">next</span><span class="p">()</span>
+<a class="line-num" href="#line-75" id="line-75">75</a>      <span class="nx">next</span><span class="p">(</span> <span class="kc">false</span> <span class="p">)</span>
+<a class="line-num" href="#line-76" id="line-76">76</a>      <span class="nx">@emit</span> <span class="s">&quot;checkMailBuffer&quot;</span>
 <a class="line-num" href="#line-77" id="line-77">77</a>      <span class="k">return</span> 
 <a class="line-num" href="#line-78" id="line-78">78</a>  
 <a class="line-num" href="#line-79" id="line-79">79</a>    <span class="nv">send: </span><span class="nf">( type, msg, cb )=&gt;</span>
@@ -297,7 +286,7 @@
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
 </div>
 <p>dispatch the message</p>
         </td>
@@ -313,30 +302,33 @@
 <a class="line-num" href="#line-100" id="line-100">100</a>  
 <a class="line-num" href="#line-101" id="line-101">101</a>      <span class="k">return</span>
 <a class="line-num" href="#line-102" id="line-102">102</a>  
-<a class="line-num" href="#line-103" id="line-103">103</a>    <span class="nv">getRsmq: </span><span class="o">=&gt;</span>
-<a class="line-num" href="#line-104" id="line-104">104</a>      <span class="k">return</span> <span class="nx">@worker</span><span class="p">.</span><span class="nx">_getRsmq</span><span class="p">()</span>
+<a class="line-num" href="#line-103" id="line-103">103</a>    <span class="nv">getRsmqWorker: </span><span class="o">=&gt;</span>
+<a class="line-num" href="#line-104" id="line-104">104</a>      <span class="k">return</span> <span class="nx">@worker</span>
 <a class="line-num" href="#line-105" id="line-105">105</a>  
-<a class="line-num" href="#line-106" id="line-106">106</a>    <span class="nv">getRedisNamespace: </span><span class="o">=&gt;</span>
-<a class="line-num" href="#line-107" id="line-107">107</a>      <span class="k">return</span> <span class="nx">@getRsmq</span><span class="p">().</span><span class="nx">redisns</span>
+<a class="line-num" href="#line-106" id="line-106">106</a>    <span class="nv">getRsmq: </span><span class="o">=&gt;</span>
+<a class="line-num" href="#line-107" id="line-107">107</a>      <span class="k">return</span> <span class="nx">@worker</span><span class="p">.</span><span class="nx">_getRsmq</span><span class="p">()</span>
 <a class="line-num" href="#line-108" id="line-108">108</a>  
-<a class="line-num" href="#line-109" id="line-109">109</a>    <span class="nv">getRedis: </span><span class="o">=&gt;</span>
-<a class="line-num" href="#line-110" id="line-110">110</a>      <span class="k">return</span> <span class="nx">@getRsmq</span><span class="p">().</span><span class="nx">redis</span>
+<a class="line-num" href="#line-109" id="line-109">109</a>    <span class="nv">getRedisNamespace: </span><span class="o">=&gt;</span>
+<a class="line-num" href="#line-110" id="line-110">110</a>      <span class="k">return</span> <span class="nx">@getRsmq</span><span class="p">().</span><span class="nx">redisns</span>
 <a class="line-num" href="#line-111" id="line-111">111</a>  
-<a class="line-num" href="#line-112" id="line-112">112</a>  
-<a class="line-num" href="#line-113" id="line-113">113</a>  
-<a class="line-num" href="#line-114" id="line-114">114</a>  </pre></div>
+<a class="line-num" href="#line-112" id="line-112">112</a>    <span class="nv">getRedis: </span><span class="o">=&gt;</span>
+<a class="line-num" href="#line-113" id="line-113">113</a>      <span class="k">return</span> <span class="nx">@getRsmq</span><span class="p">().</span><span class="nx">redis</span>
+<a class="line-num" href="#line-114" id="line-114">114</a>  
+<a class="line-num" href="#line-115" id="line-115">115</a>  
+<a class="line-num" href="#line-116" id="line-116">116</a>  
+<a class="line-num" href="#line-117" id="line-117">117</a>  </pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
 </div>
 <p>export this class</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><a class="line-num" href="#line-113" id="line-113">113</a>  
-<a class="line-num" href="#line-114" id="line-114">114</a>  <span class="nv">module.exports = </span><span class="nx">RNWorker</span>
-<a class="line-num" href="#line-115" id="line-115">115</a>  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre><a class="line-num" href="#line-116" id="line-116">116</a>  
+<a class="line-num" href="#line-117" id="line-117">117</a>  <span class="nv">module.exports = </span><span class="nx">RNWorker</span>
+<a class="line-num" href="#line-118" id="line-118">118</a>  </pre></div>
         </td>
       </tr>
   </tbody>

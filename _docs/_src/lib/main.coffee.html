@@ -364,22 +364,25 @@
 <a class="line-num" href="#line-107" id="line-107">107</a>    <span class="nv">getMailbuffer: </span><span class="o">=&gt;</span>
 <a class="line-num" href="#line-108" id="line-108">108</a>      <span class="k">return</span> <span class="nx">@mailbuffer</span>
 <a class="line-num" href="#line-109" id="line-109">109</a>  
-<a class="line-num" href="#line-110" id="line-110">110</a>    <span class="nv">getRsmq: </span><span class="o">=&gt;</span>
-<a class="line-num" href="#line-111" id="line-111">111</a>      <span class="k">return</span> <span class="nx">@worker</span><span class="p">.</span><span class="nx">getRsmq</span><span class="p">()</span>
-<a class="line-num" href="#line-112" id="line-112">112</a>  
-<a class="line-num" href="#line-113" id="line-113">113</a>    <span class="nv">getRedis: </span><span class="o">=&gt;</span>
-<a class="line-num" href="#line-114" id="line-114">114</a>      <span class="k">return</span> <span class="nx">@worker</span><span class="p">.</span><span class="nx">getRedis</span><span class="p">()</span>
+<a class="line-num" href="#line-110" id="line-110">110</a>    <span class="nv">getRsmqWorker: </span><span class="o">=&gt;</span>
+<a class="line-num" href="#line-111" id="line-111">111</a>      <span class="k">return</span> <span class="nx">@worker</span><span class="p">.</span><span class="nx">getRsmqWorker</span><span class="p">()</span>
+<a class="line-num" href="#line-112" id="line-112">112</a>      
+<a class="line-num" href="#line-113" id="line-113">113</a>    <span class="nv">getRsmq: </span><span class="o">=&gt;</span>
+<a class="line-num" href="#line-114" id="line-114">114</a>      <span class="k">return</span> <span class="nx">@worker</span><span class="p">.</span><span class="nx">getRsmq</span><span class="p">()</span>
 <a class="line-num" href="#line-115" id="line-115">115</a>  
-<a class="line-num" href="#line-116" id="line-116">116</a>    <span class="nv">getRedisNamespace: </span><span class="o">=&gt;</span>
-<a class="line-num" href="#line-117" id="line-117">117</a>      <span class="k">return</span> <span class="nx">@worker</span><span class="p">.</span><span class="nx">getRedisNamespace</span><span class="p">()</span>
+<a class="line-num" href="#line-116" id="line-116">116</a>    <span class="nv">getRedis: </span><span class="o">=&gt;</span>
+<a class="line-num" href="#line-117" id="line-117">117</a>      <span class="k">return</span> <span class="nx">@worker</span><span class="p">.</span><span class="nx">getRedis</span><span class="p">()</span>
 <a class="line-num" href="#line-118" id="line-118">118</a>  
-<a class="line-num" href="#line-119" id="line-119">119</a>  
-<a class="line-num" href="#line-120" id="line-120">120</a>    <span class="nv">ERRORS: </span><span class="o">=&gt;</span>
-<a class="line-num" href="#line-121" id="line-121">121</a>      <span class="k">return</span> <span class="nx">@extend</span> <span class="p">{},</span> <span class="k">super</span><span class="p">,</span> 
-<a class="line-num" href="#line-122" id="line-122">122</a>        <span class="s">&quot;EMISSINGLISTENER&quot;</span><span class="o">:</span> <span class="p">[</span> <span class="mi">404</span><span class="p">,</span> <span class="s">&quot;Missing Event Listener. Please make sure you&#39;ve added a event listener to `&lt;%= evname %&gt;`&quot;</span> <span class="p">]</span>
-<a class="line-num" href="#line-123" id="line-123">123</a>  
-<a class="line-num" href="#line-124" id="line-124">124</a>  
-<a class="line-num" href="#line-125" id="line-125">125</a>  </pre></div>
+<a class="line-num" href="#line-119" id="line-119">119</a>    <span class="nv">getRedisNamespace: </span><span class="o">=&gt;</span>
+<a class="line-num" href="#line-120" id="line-120">120</a>      <span class="k">return</span> <span class="nx">@worker</span><span class="p">.</span><span class="nx">getRedisNamespace</span><span class="p">()</span>
+<a class="line-num" href="#line-121" id="line-121">121</a>  
+<a class="line-num" href="#line-122" id="line-122">122</a>  
+<a class="line-num" href="#line-123" id="line-123">123</a>    <span class="nv">ERRORS: </span><span class="o">=&gt;</span>
+<a class="line-num" href="#line-124" id="line-124">124</a>      <span class="k">return</span> <span class="nx">@extend</span> <span class="p">{},</span> <span class="k">super</span><span class="p">,</span> 
+<a class="line-num" href="#line-125" id="line-125">125</a>        <span class="s">&quot;EMISSINGLISTENER&quot;</span><span class="o">:</span> <span class="p">[</span> <span class="mi">404</span><span class="p">,</span> <span class="s">&quot;Missing Event Listener. Please make sure you&#39;ve added a event listener to `&lt;%= evname %&gt;`&quot;</span> <span class="p">]</span>
+<a class="line-num" href="#line-126" id="line-126">126</a>  
+<a class="line-num" href="#line-127" id="line-127">127</a>  
+<a class="line-num" href="#line-128" id="line-128">128</a>  </pre></div>
         </td>
       </tr>
       <tr>
@@ -389,9 +392,9 @@
 </div>
 <p>export this class</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><a class="line-num" href="#line-124" id="line-124">124</a>  
-<a class="line-num" href="#line-125" id="line-125">125</a>  <span class="nv">module.exports = </span><span class="nx">RedisNotifications</span>
-<a class="line-num" href="#line-126" id="line-126">126</a>  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre><a class="line-num" href="#line-127" id="line-127">127</a>  
+<a class="line-num" href="#line-128" id="line-128">128</a>  <span class="nv">module.exports = </span><span class="nx">RedisNotifications</span>
+<a class="line-num" href="#line-129" id="line-129">129</a>  </pre></div>
         </td>
       </tr>
   </tbody>
