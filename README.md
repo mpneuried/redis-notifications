@@ -8,7 +8,7 @@
 A redis based notification engine.
 It implements the [**rsmq-worker**](https://github.com/mpneuried/rsmq-worker) to safely create notifications and recurring reports.
 
-The target is to define a simple API to be able to send notifications and mails to multiple users.
+The goal is to define a simple API to be able to send notifications and mails to multiple users.
 A user can define a setting to only receive one mail per day as a report.
 This is all done within a queuing solution. so it's scalable and failsave.
 
