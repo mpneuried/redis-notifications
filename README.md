@@ -1,5 +1,5 @@
 
-![redis-notifications](https://trello-attachments.s3.amazonaws.com/5481963992d9ba3848568a1b/600x171/d90be1c1ed4c633884420dfcebc5882f/redis-notifications_pxl.png)
+![redis-notifications](https://trello-attachments.s3.amazonaws.com/5481963992d9ba3848568a1b/600x199/0942ef2e9e86200b258685b0ff02f794/redis-notifications_pxl.png)
 
 [![Build Status](https://secure.travis-ci.org/mpneuried/redis-notifications.png?branch=master)](http://travis-ci.org/mpneuried/redis-notifications)
 [![Build Status](https://david-dm.org/mpneuried/redis-notifications.png)](https://david-dm.org/mpneuried/redis-notifications)
@@ -370,6 +370,7 @@ It's up to you to implement the DB read and Write methods and do the notificatio
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
+|0.1.0|2015-1-30|Logo update|
 |0.1.0|2015-1-30|Added docs and optimized code and API|
 |0.0.2|2015-1-29|moved schema to extra module `obj-schema`|
 |0.0.1|2015-1-29|Initial version. No tests and docs until now!|
