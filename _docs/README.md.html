@@ -18,17 +18,53 @@
     </div>
     <div id="tree"></div>
     <div id="headings">
-      <div class="heading h1">
-        <a href="#redis-notifications">redis-notifications</a>
-      </div>
-      <div class="heading h1">
-        <a href="#!!%20currently%20under%20heavy%20development%20!!">!! Currently under heavy development !!</a>
-      </div>
       <div class="heading h2">
         <a href="#install">Install</a>
       </div>
       <div class="heading h2">
         <a href="#initialize">Initialize</a>
+      </div>
+      <div class="heading h2">
+        <a href="#event%20hooks">Event Hooks</a>
+      </div>
+      <div class="heading h3">
+        <a href="#readuser">readUser</a>
+      </div>
+      <div class="heading h3">
+        <a href="#getcontent">getContent</a>
+      </div>
+      <div class="heading h3">
+        <a href="#createnotification">createNotification</a>
+      </div>
+      <div class="heading h3">
+        <a href="#sendmail">sendMail</a>
+      </div>
+      <div class="heading h3">
+        <a href="#error">error</a>
+      </div>
+      <div class="heading h2">
+        <a href="#methods">Methods</a>
+      </div>
+      <div class="heading h3">
+        <a href="#.init()">.init()</a>
+      </div>
+      <div class="heading h3">
+        <a href="#.create(%20editor%2C%20message%20%5B%2C%20cb%20%5D%20)">.create( editor, message [, cb ] )</a>
+      </div>
+      <div class="heading h3">
+        <a href="#.createmulti(%20editor%2C%20message%20%5B%2C%20cb%20%5D%20)">.createMulti( editor, message [, cb ] )</a>
+      </div>
+      <div class="heading h3">
+        <a href="#.getrsmqworker()">.getRsmqWorker()</a>
+      </div>
+      <div class="heading h3">
+        <a href="#.getrsmq()">.getRsmq()</a>
+      </div>
+      <div class="heading h3">
+        <a href="#.getredis()">.getRedis()</a>
+      </div>
+      <div class="heading h2">
+        <a href="#example">Example</a>
       </div>
       <div class="heading h2">
         <a href="#todos">Todos</a>
@@ -45,29 +81,18 @@
     </div>
   </div>
   <div id="sidebar-toggle"></div>
-  <div id="container"><div class="docs markdown">
-<div class="pilwrap" id="redis-notifications">
-  <h1>
-    <a href="#redis-notifications" name="redis-notifications" class="pilcrow">&#182;</a>
-    redis-notifications
-  </h1>
-</div>
-
+  <div id="container"><div class="docs markdown"><p><img src="https://trello-attachments.s3.amazonaws.com/5481963992d9ba3848568a1b/600x171/d90be1c1ed4c633884420dfcebc5882f/redis-notifications_pxl.png" alt="redis-notifications" title="" /></p>
 
 <p><a href="http://travis-ci.org/mpneuried/redis-notifications"><img src="https://secure.travis-ci.org/mpneuried/redis-notifications.png?branch=master" alt="Build Status" title="" /></a>
 <a href="https://david-dm.org/mpneuried/redis-notifications"><img src="https://david-dm.org/mpneuried/redis-notifications.png" alt="Build Status" title="" /></a>
 <a href="http://badge.fury.io/js/redis-notifications"><img src="https://badge.fury.io/js/redis-notifications.png" alt="NPM version" title="" /></a></p>
 
+<p>A redis based notification engine.
+It implements the <a href="https://github.com/mpneuried/rsmq-worker"><strong>rsmq-worker</strong></a> to safely create notifications and recurring reports.</p>
 
-<div class="pilwrap" id="!!%20currently%20under%20heavy%20development%20!!">
-  <h1>
-    <a href="#!!%20currently%20under%20heavy%20development%20!!" name="!!%20currently%20under%20heavy%20development%20!!" class="pilcrow">&#182;</a>
-    !! Currently under heavy development !!
-  </h1>
-</div>
-
-
-<p>A redis based notification engine. It implements the rsmq-worker to savely create notifications and recurring reports</p>
+<p>The target is to define a simple API to be able to send notifications and mails to multiple users.
+A user can define a setting to only receive one mail per day as a report.
+This is all done within a queuing solution. so it's scalable and failsave.</p>
 
 <p><a href="https://nodei.co/npm/redis-notifications/"><img src="https://nodei.co/npm/redis-notifications.png?downloads=true&amp;stars=true" alt="NPM" title="" /></a></p>
 
@@ -80,8 +105,11 @@
 </div>
 
 
-<div class='highlight'><pre><code language=''>  npm install redis-notifications
+
+<div class="highlight"><pre><code>  npm install redis-notifications
 </code></pre></div>
+
+
 
 
 <div class="pilwrap" id="initialize">
@@ -92,15 +120,475 @@
 </div>
 
 
-<div class='highlight'><pre><code language=''>  // TODO init code
-</code></pre></div>
+<p><strong>initialize</strong></p>
 
-<p><strong>Options</strong> </p>
+<pre><code language='js'>    var RedisNotifications = require( "redis-notifications" );
+
+    var nf = new RedisNotifications();
+
+    // REQUIRED EVENT LISTENERS
+    // listen to errors
+    nf.on( "error", function( err ){});
+
+    // Hock to read details of an user
+    nf.on( "readUser", function( user_id, cb ){ /* ... */ });
+
+    // Hook to generate the message content for the notification and the mail
+    nf.on( "getContent", function( type, user, editor, additional, cb ){  /* ... */ });
+
+    // Hook to write/send the notification to the user. Is is done immediately on every create
+    nf.on( "createNotification", function( user, editor, message, cb ){ /* ... */ });
+
+    // Hook to send a report to a user.
+    nf.on( "sendMail", function( user, messages, isReport, cb ){ /* ... */ });
+
+    // INIT
+    nf.init();
+
+    // METHODS
+    // define the data of the editor
+    var editor = { id: "ABCDE", firstname: "William", lastname: "Creator", email: "<a href='mailto:william.create@example.com'>william.create@example.com</a>" };
+
+    // create a notification to a single user
+    nf.create( editor, { type: "notification_type", user: 123 }, function( err, msgid ){  /* ... */  });
+</code></pre>
+
+<p><strong>Config</strong> </p>
 
 <ul>
-<li><strong>foo</strong> : <em>( <code>String</code> required )</em> TODO option description</li>
-<li><strong>bar</strong> : <em>( <code>Number</code> optional: default = <code>123</code> )</em> TODO option description</li>
+<li><strong>options</strong> <em>( <code>Object</code> optional )</em> The configuration object
+<ul><li><strong>options.maxBufferReadCount</strong>: <em>( <code>Number</code> optional; default = <code>100</code> )</em> Count of users to read at once to send mails</li></ul></li>
 </ul>
+
+
+<div class="highlight"><pre><code><span class="o">**</span><span class="p">[</span><span class="nx">RSMQ</span><span class="o">-</span><span class="nx">Worker</span> <span class="nx">Options</span><span class="p">](</span><span class="nx">https</span><span class="o">:</span><span class="c1">//github.com/mpneuried/rsmq-worker#initialize)**</span>
+
+<span class="o">-</span> <span class="o">**</span><span class="nx">options</span><span class="p">.</span><span class="nx">queuename</span><span class="o">**:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nb">String</span><span class="err">`</span> <span class="nx">optional</span><span class="p">;</span> <span class="k">default</span> <span class="o">=</span> <span class="err">`</span><span class="nx">rnqueue</span><span class="err">`</span> <span class="p">)</span><span class="o">*</span> <span class="nx">The</span> <span class="nx">queuename</span> <span class="nx">to</span> <span class="nx">pull</span> <span class="nx">the</span> <span class="nx">messages</span>
+<span class="o">-</span> <span class="o">**</span><span class="nx">options</span><span class="p">.</span><span class="nx">interval</span><span class="o">**:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nb">Number</span><span class="p">[]</span><span class="err">`</span> <span class="nx">optional</span><span class="p">;</span> <span class="k">default</span> <span class="o">=</span> <span class="err">`</span><span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span> <span class="p">]</span><span class="err">`</span> <span class="p">)</span><span class="o">*</span> <span class="nx">An</span> <span class="nb">Array</span> <span class="nx">of</span> <span class="nx">increasing</span> <span class="nx">wait</span> <span class="nx">times</span> <span class="k">in</span> <span class="nx">seconds</span>
+<span class="o">-</span> <span class="o">**</span><span class="nx">options</span><span class="p">.</span><span class="nx">maxReceiveCount</span><span class="o">**:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nb">Number</span><span class="err">`</span> <span class="nx">optional</span><span class="p">;</span> <span class="k">default</span> <span class="o">=</span> <span class="err">`</span><span class="mi">10</span><span class="err">`</span> <span class="p">)</span><span class="o">*</span> <span class="nx">Receive</span> <span class="nx">count</span> <span class="nx">until</span> <span class="nx">a</span> <span class="nx">message</span> <span class="nx">will</span> <span class="nx">be</span> <span class="nx">exceeded</span>
+<span class="o">-</span> <span class="o">**</span><span class="nx">options</span><span class="p">.</span><span class="nx">invisibletime</span><span class="o">**:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nb">Number</span><span class="err">`</span> <span class="nx">optional</span><span class="p">;</span> <span class="k">default</span> <span class="o">=</span> <span class="err">`</span><span class="mi">30</span><span class="err">`</span> <span class="p">)</span><span class="o">*</span> <span class="nx">A</span> <span class="nx">time</span> <span class="k">in</span> <span class="nx">seconds</span> <span class="nx">to</span> <span class="nx">hide</span> <span class="nx">a</span> <span class="nx">message</span> <span class="nx">after</span> <span class="nx">it</span> <span class="nx">has</span> <span class="nx">been</span> <span class="nx">received</span><span class="p">.</span>
+<span class="o">-</span> <span class="o">**</span><span class="nx">options</span><span class="p">.</span><span class="nx">defaultDelay</span><span class="o">**:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nb">Number</span><span class="err">`</span> <span class="nx">optional</span><span class="p">;</span> <span class="k">default</span> <span class="o">=</span> <span class="err">`</span><span class="mi">1</span><span class="err">`</span> <span class="p">)</span><span class="o">*</span> <span class="nx">The</span> <span class="k">default</span> <span class="nx">delay</span> <span class="k">in</span> <span class="nx">seconds</span> <span class="k">for</span> <span class="k">for</span> <span class="nx">sending</span> <span class="k">new</span> <span class="nx">messages</span> <span class="nx">to</span> <span class="nx">the</span> <span class="nx">queue</span><span class="p">.</span>
+<span class="o">-</span> <span class="o">**</span><span class="nx">options</span><span class="p">.</span><span class="nx">timeout</span><span class="o">**:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nb">Number</span><span class="err">`</span> <span class="nx">optional</span><span class="p">;</span> <span class="k">default</span> <span class="o">=</span> <span class="err">`</span><span class="mi">3000</span><span class="err">`</span> <span class="p">)</span><span class="o">*</span> <span class="nx">Message</span> <span class="nx">processing</span> <span class="nx">timeout</span> <span class="k">in</span> <span class="err">`</span><span class="nx">ms</span><span class="err">`</span><span class="p">.</span> <span class="nx">So</span> <span class="nx">you</span> <span class="nx">have</span> <span class="nx">to</span> <span class="nx">call</span> <span class="nx">the</span> <span class="err">`</span><span class="nx">next</span><span class="p">()</span><span class="err">`</span> <span class="nx">method</span> <span class="nx">of</span> <span class="err">`</span><span class="nx">message</span><span class="err">`</span> <span class="nx">at</span> <span class="nx">least</span> <span class="nx">after</span> <span class="nx">e</span><span class="p">.</span><span class="nx">g</span><span class="p">.</span> <span class="mi">3000</span><span class="nx">ms</span><span class="p">.</span> <span class="nx">If</span> <span class="nx">set</span> <span class="nx">to</span> <span class="err">`</span><span class="mi">0</span><span class="err">`</span> <span class="nx">it</span><span class="err">&#39;</span><span class="nx">ll</span> <span class="nx">wait</span> <span class="nx">until</span> <span class="nx">infinity</span><span class="p">.</span>
+<span class="o">-</span> <span class="o">**</span><span class="nx">options</span><span class="p">.</span><span class="nx">prefix</span><span class="o">**:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nb">String</span><span class="err">`</span> <span class="nx">optional</span><span class="p">;</span> <span class="k">default</span> <span class="o">=</span> <span class="err">`</span><span class="nx">notifications</span><span class="err">`</span> <span class="p">)</span><span class="o">*</span> <span class="nx">The</span> <span class="nx">redis</span> <span class="nx">namespace</span> <span class="k">for</span> <span class="nx">rsmq</span>
+<span class="o">-</span> <span class="o">**</span><span class="nx">options</span><span class="p">.</span><span class="nx">client</span><span class="o">**:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nx">RedisClient</span><span class="err">`</span> <span class="nx">optional</span><span class="p">;</span> <span class="k">default</span> <span class="o">=</span> <span class="err">`</span><span class="kc">null</span><span class="err">`</span> <span class="p">)</span><span class="o">*</span> <span class="nx">A</span> <span class="nx">already</span> <span class="nx">existing</span> <span class="nx">redis</span> <span class="nx">client</span> <span class="nx">instance</span> <span class="nx">to</span> <span class="nx">use</span><span class="p">.</span>
+<span class="o">-</span> <span class="o">**</span><span class="nx">options</span><span class="p">.</span><span class="nx">host</span><span class="o">**:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nb">String</span><span class="err">`</span> <span class="nx">optional</span><span class="p">;</span> <span class="k">default</span> <span class="o">=</span> <span class="err">`</span><span class="nx">localhost</span><span class="err">`</span> <span class="p">)</span><span class="o">*</span> <span class="nx">Host</span> <span class="nx">to</span> <span class="nx">connect</span> <span class="nx">to</span> <span class="nx">redis</span> <span class="k">if</span> <span class="err">`</span><span class="nx">redis</span><span class="err">`</span> <span class="nx">instance</span> <span class="nx">has</span> <span class="nx">been</span> <span class="nx">defined</span> 
+<span class="o">-</span> <span class="o">**</span><span class="nx">options</span><span class="p">.</span><span class="nx">port</span><span class="o">**:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nb">Number</span><span class="err">`</span> <span class="nx">optional</span><span class="p">;</span> <span class="k">default</span> <span class="o">=</span> <span class="err">`</span><span class="mi">6379</span><span class="err">`</span> <span class="p">)</span><span class="o">*</span> <span class="nx">Port</span> <span class="nx">to</span> <span class="nx">connect</span> <span class="nx">to</span> <span class="nx">redis</span> <span class="k">if</span> <span class="err">`</span><span class="nx">redis</span><span class="err">`</span> <span class="nx">instance</span> <span class="nx">has</span> <span class="nx">been</span> <span class="nx">defined</span> 
+<span class="o">-</span> <span class="o">**</span><span class="nx">options</span><span class="p">.</span><span class="nx">options</span><span class="o">**:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nb">Object</span><span class="err">`</span> <span class="nx">optional</span><span class="p">;</span> <span class="k">default</span> <span class="o">=</span> <span class="err">`</span><span class="p">{}</span><span class="err">`</span> <span class="p">)</span><span class="o">*</span> <span class="nx">Options</span> <span class="nx">to</span> <span class="nx">connect</span> <span class="nx">to</span> <span class="nx">redis</span> <span class="k">if</span> <span class="err">`</span><span class="nx">redis</span><span class="err">`</span> <span class="nx">instance</span> <span class="nx">has</span> <span class="nx">been</span> <span class="nx">defined</span> 
+</code></pre></div>
+
+
+
+
+<div class="pilwrap" id="event%20hooks">
+  <h2>
+    <a href="#event%20hooks" name="event%20hooks" class="pilcrow">&#182;</a>
+    Event Hooks
+  </h2>
+</div>
+
+
+
+<div class="pilwrap" id="readuser">
+  <h3>
+    <a href="#readuser" name="readuser" class="pilcrow">&#182;</a>
+    <code>readUser</code>
+  </h3>
+</div>
+
+
+<p>Call to read a user by the given id. So you have to implement the DB/API read yourself</p>
+
+<p><strong>Arguments</strong> </p>
+
+<ul>
+<li><strong>user_id</strong> : <em>( <code>String|Number</code> )</em> The user id to read</li>
+<li><strong>cb</strong> : <em>( <code>Function</code> )</em> The callback function</li>
+</ul>
+
+
+<div class="highlight"><pre><code><span class="o">**</span><span class="nx">Callback</span> <span class="nx">Params</span><span class="o">:**</span>
+
+<span class="o">-</span> <span class="o">**</span><span class="nx">err</span><span class="o">**</span> <span class="o">:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nx">Null</span><span class="o">|</span><span class="nb">Error</span><span class="err">`</span> <span class="p">)</span><span class="o">*</span> <span class="nx">An</span> <span class="nx">optional</span> <span class="nx">error</span>
+<span class="o">-</span> <span class="o">**</span><span class="nx">user</span><span class="o">**</span> <span class="o">:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nb">Object</span><span class="err">`</span> <span class="p">)</span><span class="o">*</span> <span class="nx">The</span> <span class="nx">user</span> <span class="nx">result</span> <span class="kd">with</span> <span class="nx">the</span> <span class="nx">following</span> <span class="nx">fields</span><span class="p">.</span> <span class="nx">You</span> <span class="nx">can</span> <span class="nx">also</span> <span class="nx">add</span> <span class="nx">additional</span> <span class="nx">fields</span> <span class="nx">you</span> <span class="nx">need</span> <span class="nx">later</span>
+    <span class="o">-</span> <span class="o">**</span><span class="nx">user</span><span class="p">.</span><span class="nx">id</span><span class="o">**</span> <span class="o">:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nb">String</span><span class="o">|</span><span class="nb">Number</span><span class="err">`</span><span class="p">,</span> <span class="nx">required</span> <span class="p">)</span><span class="o">*</span> <span class="nx">The</span> <span class="nx">user_id</span>
+    <span class="o">-</span> <span class="o">**</span><span class="nx">user</span><span class="p">.</span><span class="nx">firstname</span><span class="o">**</span> <span class="o">:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nb">String</span><span class="err">`</span><span class="p">,</span> <span class="nx">required</span> <span class="p">)</span><span class="o">*</span> <span class="nx">The</span> <span class="nx">user</span><span class="s1">&#39;s first name. </span>
+<span class="s1">    - **user.lastname** : *( `String`, optional )* The user&#39;</span><span class="nx">s</span> <span class="nx">last</span> <span class="nx">name</span><span class="p">.</span> 
+    <span class="o">-</span> <span class="o">**</span><span class="nx">user</span><span class="p">.</span><span class="nx">email</span><span class="o">**</span> <span class="o">:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nb">String</span><span class="err">`</span><span class="p">,</span> <span class="nx">required</span> <span class="p">)</span><span class="o">*</span> <span class="nx">The</span> <span class="nx">user</span><span class="err">&#39;</span><span class="nx">s</span> <span class="nx">email</span><span class="p">.</span> 
+    <span class="o">-</span> <span class="o">**</span><span class="nx">user</span><span class="p">.</span><span class="nx">timezone</span><span class="o">**</span> <span class="o">:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nb">String</span><span class="err">`</span><span class="p">,</span> <span class="nx">required</span> <span class="p">)</span><span class="o">*</span> <span class="nx">A</span> <span class="nx">timezone</span> <span class="nx">string</span><span class="p">.</span> <span class="nx">It</span> <span class="nx">has</span> <span class="nx">to</span> <span class="nx">be</span> <span class="nx">a</span> <span class="nx">valid</span> <span class="p">[</span><span class="nx">moment</span> <span class="nx">timezone</span><span class="p">](</span><span class="nx">http</span><span class="o">:</span><span class="c1">//momentjs.com/timezone/) string</span>
+    <span class="o">-</span> <span class="o">**</span><span class="nx">user</span><span class="p">.</span><span class="nx">sendInterval</span><span class="o">**</span> <span class="o">:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nb">String</span><span class="err">`</span><span class="p">,</span> <span class="nx">required</span> <span class="p">)</span><span class="o">*</span> <span class="nx">The</span> <span class="nx">send</span> <span class="nx">interval</span><span class="p">.</span> <span class="nx">This</span> <span class="nx">defines</span> <span class="k">if</span><span class="p">,</span> <span class="nx">how</span> <span class="nx">and</span> <span class="nx">when</span> <span class="nx">the</span> <span class="nx">user</span> <span class="nx">will</span> <span class="nx">receive</span> <span class="nx">a</span> <span class="nx">email</span>
+
+        <span class="o">**</span><span class="nx">Possible</span> <span class="nx">values</span><span class="o">:**</span>
+
+        <span class="o">-</span> <span class="o">**</span><span class="err">`</span><span class="mi">0</span><span class="err">`</span><span class="o">:**</span> <span class="nx">The</span> <span class="nx">user</span> <span class="nx">will</span> <span class="nx">never</span> <span class="nx">receive</span> <span class="nx">a</span> <span class="nx">mail</span>
+        <span class="o">-</span> <span class="o">**</span><span class="err">`</span><span class="nx">p</span><span class="err">`</span><span class="o">:**</span> <span class="nx">receive</span> <span class="nx">the</span> <span class="nx">only</span> <span class="nx">prio</span> <span class="nx">mails</span> <span class="o">*</span><span class="p">(</span> <span class="nx">created</span> <span class="kd">with</span> <span class="err">`</span><span class="nx">high</span><span class="o">:</span><span class="kc">true</span><span class="err">`</span> <span class="p">)</span><span class="o">*</span> <span class="nx">immediately</span>
+        <span class="o">-</span> <span class="o">**</span><span class="err">`</span><span class="nx">i</span><span class="err">`</span><span class="o">:**</span> <span class="nx">receive</span> <span class="nx">the</span> <span class="nx">mail</span> <span class="nx">immediately</span>
+        <span class="o">-</span> <span class="o">**</span><span class="err">`</span><span class="nx">d</span><span class="p">{</span><span class="nx">time</span><span class="p">}</span><span class="err">`</span><span class="o">:**</span> <span class="nx">receive</span> <span class="nx">the</span> <span class="nx">mail</span> <span class="nx">daily</span> <span class="nx">report</span><span class="p">.</span> <span class="nx">The</span> <span class="nx">time</span> <span class="nx">has</span> <span class="nx">to</span> <span class="nx">be</span> <span class="nx">a</span> <span class="mi">4</span> <span class="nx">digit</span> <span class="nx">number</span><span class="p">.</span> <span class="nx">E</span><span class="p">.</span><span class="nx">g</span><span class="p">.</span> <span class="err">`</span><span class="mi">0800</span><span class="err">`</span> <span class="o">=</span> <span class="mi">8</span> <span class="k">in</span> <span class="nx">the</span> <span class="nx">morning</span> <span class="nx">within</span> <span class="nx">his</span> <span class="nx">timezone</span><span class="p">.</span> <span class="err">`</span><span class="mi">2330</span><span class="err">`</span> <span class="o">=</span> <span class="nx">half</span> <span class="nx">an</span> <span class="nx">hour</span> <span class="nx">before</span> <span class="nx">midnight</span><span class="p">.</span>
+</code></pre></div>
+
+
+
+
+<div class="pilwrap" id="getcontent">
+  <h3>
+    <a href="#getcontent" name="getcontent" class="pilcrow">&#182;</a>
+    <code>getContent</code>
+  </h3>
+</div>
+
+
+<p>Create the notification content</p>
+
+<p><strong>Arguments</strong> </p>
+
+<ul>
+<li><strong>type</strong> : <em>( <code>String</code> )</em> The message type you defined on <code>.create{Multile}()</code></li>
+<li><strong>user</strong> : <em>( <code>Object</code> )</em> User result generated by you within the <code>readUser</code> hook</li>
+<li><strong>editor</strong> : <em>( <code>Object</code> )</em> User editor you added on <code>.create{Multile}()</code></li>
+<li><strong>additional</strong> : <em>( <code>Object</code> )</em> User additional data you added on <code>.create{Multile}()</code></li>
+<li><strong>cb</strong> : <em>( <code>Function</code> )</em> The callback function</li>
+</ul>
+
+
+<div class="highlight"><pre><code><span class="o">**</span><span class="nx">Callback</span> <span class="nx">Params</span><span class="o">:**</span>
+
+<span class="o">-</span> <span class="o">**</span><span class="nx">err</span><span class="o">**</span> <span class="o">:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nx">Null</span><span class="o">|</span><span class="nb">Error</span><span class="err">`</span> <span class="p">)</span><span class="o">*</span> <span class="nx">An</span> <span class="nx">optional</span> <span class="nx">error</span>
+<span class="o">-</span> <span class="o">**</span><span class="nx">content</span><span class="o">**</span> <span class="o">:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nb">Object</span><span class="err">`</span> <span class="p">)</span><span class="o">*</span> <span class="nx">The</span> <span class="nx">content</span> <span class="nx">result</span> <span class="kd">with</span> <span class="nx">the</span> <span class="nx">following</span> <span class="nx">fields</span><span class="p">.</span> <span class="nx">You</span> <span class="nx">can</span> <span class="nx">also</span> <span class="nx">add</span> <span class="nx">additional</span> <span class="nx">fields</span> <span class="nx">you</span> <span class="nx">need</span> <span class="nx">later</span>
+    <span class="o">-</span> <span class="o">**</span><span class="nx">content</span><span class="p">.</span><span class="nx">subject</span><span class="o">**</span> <span class="o">:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nb">String</span><span class="err">`</span><span class="p">,</span> <span class="nx">required</span> <span class="p">)</span><span class="o">*</span> <span class="nx">The</span> <span class="nx">message</span> <span class="nx">subject</span><span class="o">/</span><span class="nx">headline</span>
+    <span class="o">-</span> <span class="o">**</span><span class="nx">content</span><span class="p">.</span><span class="nx">body</span><span class="o">**</span> <span class="o">:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nb">String</span><span class="err">`</span><span class="p">,</span> <span class="nx">required</span> <span class="p">)</span><span class="o">*</span> <span class="nx">The</span> <span class="nx">message</span> <span class="nx">body</span>
+    <span class="o">-</span> <span class="o">**</span><span class="nx">content</span><span class="p">.</span><span class="nx">teaser</span><span class="o">**</span> <span class="o">:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nb">String</span><span class="err">`</span><span class="p">,</span> <span class="nx">optional</span> <span class="p">)</span><span class="o">*</span> <span class="nx">The</span> <span class="nx">message</span> <span class="nx">teaser</span><span class="p">.</span> <span class="nx">HTML</span> <span class="nx">will</span> <span class="nx">be</span> <span class="nx">stripped</span> <span class="nx">out</span><span class="o">!</span> <span class="nx">If</span> <span class="nx">not</span> <span class="nx">defined</span> <span class="nx">the</span> <span class="nx">module</span> <span class="nx">truncates</span> <span class="nx">the</span> <span class="err">`</span><span class="nx">body</span><span class="err">`</span> <span class="nx">to</span> <span class="mi">100</span> <span class="nx">chars</span><span class="p">.</span> 
+</code></pre></div>
+
+
+
+
+<div class="pilwrap" id="createnotification">
+  <h3>
+    <a href="#createnotification" name="createnotification" class="pilcrow">&#182;</a>
+    <code>createNotification</code>
+  </h3>
+</div>
+
+
+<p>This will called immediately after <code>.create{Multile}()</code>.
+Here you have to write the notification to your db and/or send it immediately to the user.</p>
+
+<p><strong>Arguments</strong> </p>
+
+<ul>
+<li><strong>user</strong> : <em>( <code>Object</code> )</em> User result generated by you within the <code>readUser</code> hook</li>
+<li><strong>editor</strong> : <em>( <code>Object</code> )</em> User editor you added on <code>.create{Multile}()</code></li>
+<li><strong>message</strong> : <em>( <code>Object</code> )</em> The message content you created within the <code>getContent</code> hook</li>
+<li><strong>cb</strong> : <em>( <code>Function</code> )</em> The callback function</li>
+</ul>
+
+
+<div class="highlight"><pre><code><span class="o">**</span><span class="nx">Callback</span> <span class="nx">Params</span><span class="o">:**</span>
+
+<span class="o">-</span> <span class="o">**</span><span class="nx">err</span><span class="o">**</span> <span class="o">:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nx">Null</span><span class="o">|</span><span class="nb">Error</span><span class="err">`</span> <span class="p">)</span><span class="o">*</span> <span class="nx">An</span> <span class="nx">optional</span> <span class="nx">error</span>
+</code></pre></div>
+
+
+
+
+<div class="pilwrap" id="sendmail">
+  <h3>
+    <a href="#sendmail" name="sendmail" class="pilcrow">&#182;</a>
+    <code>sendMail</code>
+  </h3>
+</div>
+
+
+<p>Send a mail to the user.
+This is only done if <code>sendInterval</code> is <code>d{time}</code>, <code>i</code> or <code>p</code>
+Only on <code>d{time}</code> a report is generated witch could contain more than one message.</p>
+
+<p><strong>Arguments</strong> </p>
+
+<ul>
+<li><strong>user</strong> : <em>( <code>Object</code> )</em> User result generated by you within the <code>readUser</code> hook</li>
+<li><strong>messages</strong> : <em>( <code>Object[]</code> )</em> An Array messages you created within the <code>getContent</code> hooks</li>
+<li><strong>isReport</strong> : <em>( <code>Boolean</code> )</em> A flag that tells you this mail is a report because the user used <code>sendInterval = "d{time}"</code>.</li>
+<li><strong>cb</strong> : <em>( <code>Function</code> )</em> The callback function</li>
+</ul>
+
+
+<div class="highlight"><pre><code><span class="o">**</span><span class="nx">Callback</span> <span class="nx">Params</span><span class="o">:**</span>
+
+<span class="o">-</span> <span class="o">**</span><span class="nx">err</span><span class="o">**</span> <span class="o">:</span> <span class="o">*</span><span class="p">(</span> <span class="err">`</span><span class="nx">Null</span><span class="o">|</span><span class="nb">Error</span><span class="err">`</span> <span class="p">)</span><span class="o">*</span> <span class="nx">An</span> <span class="nx">optional</span> <span class="nx">error</span>
+</code></pre></div>
+
+
+
+
+<div class="pilwrap" id="error">
+  <h3>
+    <a href="#error" name="error" class="pilcrow">&#182;</a>
+    <code>error</code>
+  </h3>
+</div>
+
+
+<p>An error occurred</p>
+
+<p><strong>Arguments</strong> </p>
+
+<ul>
+<li><strong>err</strong> : <em>( <code>Error</code> )</em> A error</li>
+</ul>
+
+
+<div class="pilwrap" id="methods">
+  <h2>
+    <a href="#methods" name="methods" class="pilcrow">&#182;</a>
+    Methods
+  </h2>
+</div>
+
+
+
+<div class="pilwrap" id=".init()">
+  <h3>
+    <a href="#.init()" name=".init()" class="pilcrow">&#182;</a>
+    <code>.init()</code>
+  </h3>
+</div>
+
+
+<p>After you added the required hooks you have the call <code>.init()</code> to start the module.</p>
+
+
+<div class="pilwrap" id=".create(%20editor%2C%20message%20%5B%2C%20cb%20%5D%20)">
+  <h3>
+    <a href="#.create(%20editor%2C%20message%20%5B%2C%20cb%20%5D%20)" name=".create(%20editor%2C%20message%20%5B%2C%20cb%20%5D%20)" class="pilcrow">&#182;</a>
+    <code>.create( editor, message [, cb ] )</code>
+  </h3>
+</div>
+
+
+<p>Create a notification for one user</p>
+
+<p><strong>Arguments</strong></p>
+
+<ul>
+<li><code>editor</code> : <em>( <code>Object</code> required )</em>: The sending editor
+<ul><li><code>editor.id</code> : <em>( <code>String|Number</code> required )</em>: a unique identifier of the notification creator</li>
+<li><code>editor.firstname</code> : <em>( <code>String</code> optional )</em>: The first name of the creator</li>
+<li><code>editor.lastname</code> : <em>( <code>String</code> optional )</em>: The last name of the creator</li>
+<li><code>editor.email</code> : <em>( <code>String</code> optional )</em>: The email of the creator</li></ul></li>
+<li><code>message</code> : <em>( <code>Object</code> required )</em>: The message data
+<ul><li><code>message.type</code> : <em>( <code>String</code> required )</em>: The notification type. This is a key to be able to generate different notification contents</li>
+<li><code>message.user</code> : <em>( <code>String|Number</code> required )</em>: The id of the user that will receive this message</li>
+<li><code>message.high</code> : <em>( <code>Boolean</code> optional; default = <code>false</code> )</em>: This flag marks this notification as high prio. So mails will send immediately and users with <code>sendInterval = "p"</code> will alos get a mail.</li>
+<li><code>message.additional</code> : <em>( <code>Object</code> optional )</em>: An object you could use to place custom data. This cwill be passed to the hook <code>getContent</code></li></ul></li>
+<li><code>cb</code> : <em>( <code>Function</code> optional )</em>: A optional callback method. Callback arguments: <code>function( err, nid ){}</code></li>
+</ul>
+
+<p><strong>Return</strong></p>
+
+<p><em>( Null|Error )</em>: Null on success or a validation error.</p>
+
+
+<div class="pilwrap" id=".createmulti(%20editor%2C%20message%20%5B%2C%20cb%20%5D%20)">
+  <h3>
+    <a href="#.createmulti(%20editor%2C%20message%20%5B%2C%20cb%20%5D%20)" name=".createmulti(%20editor%2C%20message%20%5B%2C%20cb%20%5D%20)" class="pilcrow">&#182;</a>
+    <code>.createMulti( editor, message [, cb ] )</code>
+  </h3>
+</div>
+
+
+<p>Create a notification for multiple users</p>
+
+<p><strong>Arguments</strong></p>
+
+<ul>
+<li><code>editor</code> : <em>( <code>Object</code> required )</em>: The sending editor
+<ul><li><code>editor.id</code> : <em>( <code>String|Number</code> required )</em>: a unique identifier of the notification creator</li>
+<li><code>editor.firstname</code> : <em>( <code>String</code> optional )</em>: The first name of the creator</li>
+<li><code>editor.lastname</code> : <em>( <code>String</code> optional )</em>: The last name of the creator</li>
+<li><code>editor.email</code> : <em>( <code>String</code> optional )</em>: The email of the creatore</li></ul></li>
+<li><code>message</code> : <em>( <code>Object</code> required )</em>: The message data
+<ul><li><code>message.type</code> : <em>( <code>String</code> required )</em>: The notification type. This is a key to be able to generate different notification contents</li>
+<li><code>message.users</code> : <em>( <code>Array</code> required )</em>: An Array of user ids that will receive this notification.</li>
+<li><code>message.high</code> : <em>( <code>Boolean</code> optional; default = <code>false</code> )</em>: This flag marks this notification as high prio. So mails will send immediately and users with <code>sendInterval = "p"</code> will alos get a mail.</li>
+<li><code>message.additional</code> : <em>( <code>Object</code> optional; default = <code>{}</code> )</em>: An object you could use to place custom data. This will be passed to the hook <code>getContent</code></li></ul></li>
+<li><code>cb</code> : <em>( <code>Function</code> optional )</em>: A optional callback method. Callback arguments: <code>function( err ){}</code></li>
+</ul>
+
+<p><strong>Return</strong></p>
+
+<p><em>( Null|Error )</em>: Null on success or a validation error.</p>
+
+
+<div class="pilwrap" id=".getrsmqworker()">
+  <h3>
+    <a href="#.getrsmqworker()" name=".getrsmqworker()" class="pilcrow">&#182;</a>
+    <code>.getRsmqWorker()</code>
+  </h3>
+</div>
+
+
+<p>Helper method to get internal used instance</p>
+
+<p><strong>Return</strong></p>
+
+<p><em>( RSMQWorker )</em>: The internal <a href="https://github.com/mpneuried/rsmq-worker">rsmq-worker</a> instance.</p>
+
+
+<div class="pilwrap" id=".getrsmq()">
+  <h3>
+    <a href="#.getrsmq()" name=".getrsmq()" class="pilcrow">&#182;</a>
+    <code>.getRsmq()</code>
+  </h3>
+</div>
+
+
+<p>Helper method to get internal used instance</p>
+
+<p><strong>Return</strong></p>
+
+<p><em>( RedisSMQ )</em>: The internal <a href="https://github.com/smrchy/rsmq">rsmq</a> instance.</p>
+
+
+<div class="pilwrap" id=".getredis()">
+  <h3>
+    <a href="#.getredis()" name=".getredis()" class="pilcrow">&#182;</a>
+    <code>.getRedis()</code>
+  </h3>
+</div>
+
+
+<p>Helper method to get internal used instance</p>
+
+<p><strong>Return</strong></p>
+
+<p><em>( RedisClient )</em>: The internal <a href="https://github.com/mranney/node_redis">redis</a> instance.</p>
+
+
+<div class="pilwrap" id="example">
+  <h2>
+    <a href="#example" name="example" class="pilcrow">&#182;</a>
+    Example
+  </h2>
+</div>
+
+
+<p>This is a example implementation.
+It's up to you to implement the DB read and Write methods and do the notification and mail sending.</p>
+
+<pre><code language='js'>    var RedisNotifications = require( "redis-notifications" );
+
+    var nf = new RedisNotifications();
+
+    // REQUIRED EVENT LISTENERS
+    // listen to errors
+    nf.on( "error", function( err ){
+        console.error( err, err.stack );
+    });
+
+    // Hock to read details of an user
+    nf.on( "readUser", function( user_id, cb ){
+
+        // here you have to query your database and return a valid user with at least these fields
+        var user = {
+            // required fields
+            id: user_id,                                // unique user id
+            firstname: "John",          
+            email: "<a href='mailto:john.do@mail.com'>john.do@mail.com</a>",
+            timezone: "CET",                        // a moment-timezone valid timezone
+            sendInterval: "i",                      // when to send a mail 
+
+            // optional fields
+            lastname: "Do",             
+
+            // custom fields
+            custom_lang: "DE"                       // it is possible to add custom fields
+        };
+        cb( null, user );
+    });
+
+    // Hook to generate the message content for the notification and the mail
+    nf.on( "getContent", function( type, user, editor, additional, cb ){
+
+        // here you have to generate your message by type. Usually you would use a template-engine
+
+        var content = {
+            // required fields
+            subject: "This is my message subject",
+            body: "Lorem ipsum dolor ...",          
+
+            // custom fields
+            custom_field: additional.custom_key,    // it is possible to add custom fields to the content
+            custom_lang: user.custom_lang           // reuse the custom field from user
+        };
+        cb( null, content );
+    });
+
+    // Hook to write/send the notification to the user. Is is done immediately on every create
+    nf.on( "createNotification", function( user, editor, message, cb ){
+
+        // here you have to write the notification to your db and/or send it immediately to the user
+
+        cb( null );
+    });
+
+    // Hook to send a report to a user.
+    // This is only done if `sendInterval` is `d{time}`, `i` or `p`
+    // Only on `d{time}` a report is generated witch could contain more than one message
+    nf.on( "sendMail", function( user, messages, isReport, cb ){
+
+        // here you have to do create of the mail content and mail send it.
+
+        cb( null );
+    });
+
+    // INIT
+    // you have to initialize the module until the required listeners has been added
+    nf.init();
+
+    // METHODS
+
+    // define the data of the editor
+    var editor = {
+        // required fields
+        id: "ABCDE",
+
+        // optional fields
+        firstname: "William",
+        lastname: "Creator",
+        email: "<a href='mailto:william.create@example.com'>william.create@example.com</a>",
+
+        // custom fields
+        custom_lang: "DE"
+    };
+
+
+    // create a notification for multiple users without callback
+    var errCrM = nf.createMulti( editor, {
+        type: "notification_type",                  // A type to differ the content in the `getContent` hook
+        users: [ 123, 456, 789 ],                   // An array of user that will receive this notification
+        high: true                                  // A flag to define this notification as high prio.
+    });
+    if( errCrM ){
+        console.error( errCrM );
+    }
+    // High means:
+    // - This message will be send by mail immediately.
+    // - Users with `sendInterval = "p"` (only high prio) will also get this notification.
+
+    // create a notification to a single user
+    nf.create( editor, {
+        type: "notification_type",                  // A type to differ the content in the `getContent` hook
+        user: 123,                                  // The user id that will receive this notification
+        high: false,                                // A flag to define this notification as high prio.
+        additional: {
+            custom_icon: "info"                     // additional data that later can be used with in the `getContent` hook
+        }
+    }, function( err, msgid ){
+        if( err ){
+            console.error( err );
+        }
+    });
+</code></pre>
 
 
 <div class="pilwrap" id="todos">
@@ -112,7 +600,8 @@
 
 
 <ul>
-<li>implement test cases to check for correct template generation.</li>
+<li>Tests</li>
+<li>add <code>sendInterval</code> variant to send the report weekly and/or monthly.</li>
 </ul>
 
 
@@ -126,6 +615,8 @@
 
 <p>|Version|Date|Description|
 |:--:|:--:|:--|
+|0.1.0|2015-1-30|Added docs and optimized code and API|
+|0.0.2|2015-1-29|moved schema to extra module <code>obj-schema</code>|
 |0.0.1|2015-1-29|Initial version. No tests and docs until now!|</p>
 
 <p><a href="https://nodei.co/npm/redis-notifications/"><img src="https://nodei.co/npm-dl/redis-notifications.png?months=6" alt="NPM" title="" /></a></p>
@@ -148,6 +639,7 @@
 |<a href="https://github.com/smrchy/rsmq"><strong>rsmq</strong></a>|A really simple message queue based on Redis|
 |<a href="https://github.com/mpneuried/rsmq-worker"><strong>rsmq-worker</strong></a>|Helper to simply implement a worker <a href="https://github.com/smrchy/rsmq">RSMQ ( Redis Simple Message Queue )</a>.|
 |<a href="https://github.com/tcs-de/nodecache"><strong>node-cache</strong></a>|Simple and fast NodeJS internal caching. Node internal in memory cache like memcached.|
+|<a href="https://github.com/mpneuried/obj-schema"><strong>obj-schema</strong></a>|Simple module to validate an object by a predefined schema|
 |<a href="https://github.com/smrchy/redis-sessions"><strong>redis-sessions</strong></a>|An advanced session store for NodeJS and Redis|
 |<a href="https://github.com/mpneuried/connect-redis-sessions"><strong>connect-redis-sessions</strong></a>|A connect or express middleware to simply use the <a href="https://github.com/smrchy/redis-sessions">redis sessions</a>. With <a href="https://github.com/smrchy/redis-sessions">redis sessions</a> you can handle multiple sessions per user_id.|
 |<a href="https://github.com/mpneuried/systemhealth"><strong>systemhealth</strong></a>|Node module to run simple custom checks for your machine or it's connections. It will use <a href="https://github.com/mpneuried/redis-heartbeat">redis-heartbeat</a> to send the current state to redis.|

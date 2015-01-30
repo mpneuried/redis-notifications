@@ -4,7 +4,9 @@
 # ### Exports: *Class*
 #
 # Main Module to init the notifications to redis
-# 
+
+# **npm modules**
+_ = require( "lodash" )
 
 # **internal modules**
 # [RNWorker](./worker.coffee.html)
@@ -30,11 +32,22 @@ class RedisNotifications extends require( "mpbasic" )()
 	# ## defaults
 	defaults: =>
 		@extend super, 
+			# **options.maxBufferReadCount** *Number* Count of users to read at once to send mails
+			maxBufferReadCount: 100
+
+			# RSMW-Worker options
 			# **options.queuename** *String* The queuename to use for the worker
 			queuename: "rnqueue"
 			# **options.interval** *Number[]* An Array of increasing wait times in seconds
 			interval: [ 0, 1, 5, 10 ]
-
+			# **RSMQWorker.maxReceiveCount** *Number* Receive count until a message will be exceeded
+			maxReceiveCount: 10
+			# **RSMQWorker.invisibletime** *Number* A time in seconds to hide a message after it has been received.
+			invisibletime: 30
+			# **RSMQWorker.defaultDelay** *Number* The default delay in seconds for for sending new messages to the queue.
+			defaultDelay: 1
+			# **RSMQWorker.timeout** *Number* Message processing timeout in `ms`. If set to `0` it'll wait until infinity.
+			timeout: 3000
 			# **options.host** *String* Redis host name
 			host: "localhost"
 			# **options.port** *Number* Redis port
@@ -85,8 +98,17 @@ class RedisNotifications extends require( "mpbasic" )()
 
 		options.creator = creator
 
-		@worker.send( "crNfcns", options )
-		return
+		if _.isFunction( cb )
+			@worker.send "crNfcns", options, ( err, qmid )->
+				if err
+					cb( err )
+					return
+				cb( null )
+				return
+		else
+			@worker.send( "crNfcns", options )
+
+		return null
 
 	create: ( creator, options, cb = true )=>
 		_verrC =  validateCreator( creator, cb )
@@ -97,8 +119,8 @@ class RedisNotifications extends require( "mpbasic" )()
 
 		options.creator = creator
 
-		@worker.send( "crNfcn", options )
-		return
+		@worker.send( "crNfcn", options, cb )
+		return null
 
 	getWorker: =>
 		return @worker

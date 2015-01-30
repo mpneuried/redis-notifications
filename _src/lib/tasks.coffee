@@ -139,7 +139,7 @@ class RNTasks extends require( "mpbasic" )()
 
 	_getMessageContent: ( msgid, data, userdata, next )=>
 		#@info "_getMessageContent", data
-		@main.emit "getContent", userdata, data.type, data.additional, ( err, message )=>
+		@main.emit "getContent", data.type, userdata, data.creator, data.additional, ( err, message )=>
 			if err
 				@main.emit "error", err
 				@warning "getMessageContent", err
@@ -156,7 +156,7 @@ class RNTasks extends require( "mpbasic" )()
 			# set the message id to set a unique identifier
 			message.id = msgid
 
-			@main.emit "createNotification", userdata, data.creator, message, data.additional, ( err )=>
+			@main.emit "createNotification", userdata, data.creator, message, ( err )=>
 				if err
 					@main.emit "error", err
 					@warning "createNotification", err

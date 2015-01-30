@@ -1,6 +1,6 @@
 {
   "name": "redis-notifications",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "A redis based notification engine. It implements the rsmq-worker to savely create notifications and recurring reports",
   "keywords": [],
   "homepage": "https://github.com/mpneuried/redis-notifications",

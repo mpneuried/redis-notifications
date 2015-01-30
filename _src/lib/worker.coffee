@@ -40,6 +40,10 @@ class RNWorker extends require( "mpbasic" )()
 		super
 		@worker = new RSMQWorker @config.queuename,
 			interval: @config.interval
+			maxReceiveCount: @config.maxReceiveCount
+			invisibletime: @config.invisibletime
+			defaultDelay: @config.defaultDelay
+			timeout: @config.timeout
 			customExceedCheck: @_customExceedCheck
 
 			redis: @config.client

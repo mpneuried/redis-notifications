@@ -27,6 +27,7 @@ nf.on "readUser", ( id, cb )->
 		email: "john.do@example.com"
 		timezone: "CET" # possible timezones can be viewed at http://momentjs.com/timezone/docs/#/data-loading/getting-zone-names/
 		sendInterval: pickSendIv()
+		custom_data: "ABC"
 
 	### `sendInterval` {i|d|p|0}{time}
 	eg: d:1700
@@ -42,8 +43,8 @@ nf.on "readUser", ( id, cb )->
 	cb( null, _user )
 	return
 
-nf.on "getContent", ( user, type, additional, cb )=>
-	console.log "\n\n --- EXAMPLE - GET CONTENT --- \nUSER:", user, "\n --- \nTYPE:", type, "\n --- \nADDITIONAL:", additional, "\n --- \n\n"
+nf.on "getContent", ( type, user, creator, additional, cb )=>
+	console.log "\n\n --- EXAMPLE - GET CONTENT --- \nTYPE:", type, "\n --- \nUSER:", user, "\n --- \nCREATOR:", creator, "\n --- \nADDITIONAL:", additional, "\n --- \n\n"
 
 	_content = 
 		subject: "This is my subject"
@@ -55,8 +56,8 @@ nf.on "getContent", ( user, type, additional, cb )=>
 	cb( null, _content )
 	return
 
-nf.on "createNotification", ( user, creator, message, additional, cb )=>
-	console.log "\n\n --- EXAMPLE - SEND NOTIFICATION --- \nID",  message.id, "\n --- \nUSER:", user, "\n --- \nMSG:", message, "\n --- \nCREATOR:", creator, "\n --- \nADDITIONAL:", additional, "\n --- \n\n"
+nf.on "createNotification", ( user, creator, message, cb )=>
+	console.log "\n\n --- EXAMPLE - SEND NOTIFICATION --- \nID",  message.id, "\n --- \nUSER:", user, "\n --- \nMSG:", message, "\n --- \nCREATOR:", creator, "\n --- \n\n"
 	cb( null )
 	return
 

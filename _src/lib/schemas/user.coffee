@@ -8,7 +8,6 @@ module.exports = new ( class UserSchema extends require( "obj-schema" ) )(
 
 	lastname: 
 		type: "string"
-		required: true
 
 	email: 
 		type: "email"
