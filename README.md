@@ -10,7 +10,7 @@ It implements the [**rsmq-worker**](https://github.com/mpneuried/rsmq-worker) to
 
 The goal is to define a simple API to be able to send notifications and mails to multiple users.
 A user can define a setting to only receive one mail per day as a report.
-This is all done within a queuing solution. so it's scalable and failsave.
+This is all done within a queuing solution. so it's scalable and failsafe.
 
 [![NPM](https://nodei.co/npm/redis-notifications.png?downloads=true&stars=true)](https://nodei.co/npm/redis-notifications/)
 
