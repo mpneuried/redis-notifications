@@ -1,8 +1,20 @@
 services:
   - redis-server
+os:
+  - linux
 language: node_js
 node_js:
   - 0.10
+  - 0.12
+  - 4.0
+  - 4.4
+  - 5.1
+  - 5.5
+  - 5.11
+  - 6.0
+  - 6.1
+  - iojs
+  - node
 before_script:
   - "npm install -g mocha grunt-cli"
   - "grunt build"
