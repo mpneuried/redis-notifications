@@ -1,21 +1,21 @@
 module.exports = new ( class UserSchema extends require( "obj-schema" ) )(
-	id: 
+	id:
 		required: true
 
-	firstname: 
+	firstname:
 		type: "string"
 		required: true
 
-	lastname: 
+	lastname:
 		type: "string"
 
-	email: 
+	email:
 		type: "email"
 		required: true
 
 	timezone:
 		type: "timezone"
-		required: true		
+		required: true
 
 	sendInterval:
 		type: "string"

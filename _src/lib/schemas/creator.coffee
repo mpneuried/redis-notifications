@@ -1,14 +1,14 @@
 module.exports = new ( class CreatorSchema extends require( "obj-schema" ) )(
-	id: 
+	id:
 		required: true
 
-	firstname: 
+	firstname:
 		type: "string"
 
-	lastname: 
+	lastname:
 		type: "string"
 
-	email: 
+	email:
 		type: "email"
 
 , name: "creator" ).validateCb

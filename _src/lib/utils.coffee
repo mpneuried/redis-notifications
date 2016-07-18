@@ -5,7 +5,7 @@
 # A collection of helper functions
 
 # export the functions
-module.exports = 
+module.exports =
 	###
 	## randomString
 	
@@ -67,23 +67,6 @@ module.exports =
 		_l = arr.length - 1
 		return ->
 			return arr[ randRange( 0, _l ) ]
-
-	###
-	## lpad
-	
-	`utils.lpad( lowVal, highVal )`
-	
-	Left pad string
-	
-	@param { String } value The value to pad
-	@param { Number } [padding=2] The padding size
-	@param { String } [fill="0"] The filler value.
-	
-	@return { String } the padded value
-	###
-	lpad: (value, padding = 2, fill = "0") ->
-		fill += fill for i in [1..padding]
-		return (fill + value).slice(padding * -1)
 
 	###
 	## lpad

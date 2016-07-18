@@ -10,13 +10,13 @@
 moment = require( "moment-timezone" )
 
 # [utils](./utils.coffee.html)
-utils = require( "./utils" ) 
+utils = require( "./utils" )
 
 class RNMailBuffer extends require( "mpbasic" )()
 
 	# ## defaults
 	defaults: =>
-		@extend super, 
+		@extend super,
 			keyUserlist: "users_with_messages"
 			keyMsgsPrefix: "msgs"
 
@@ -58,7 +58,7 @@ class RNMailBuffer extends require( "mpbasic" )()
 			rM.push( [ "ZADD", @_getKey( @config.keyUserlist ), @_calcSendAt( ms, _ud.sendInterval, _ud.timezone ), _ud.id ] )
 			rM.push( [ "LPUSH", @_getKey( @config.keyMsgsPrefix, _ud.id ), JSON.stringify( data )] )
 
-			@redis.multi( rM ).exec ( err, results )=>
+			@redis.multi( rM ).exec ( err, results )->
 				if err
 					cb( err )
 					return
@@ -79,7 +79,7 @@ class RNMailBuffer extends require( "mpbasic" )()
 		return
 
 	userMsgs: ( uid, cb )=>
-		@redis.lrange @_getKey( @config.keyMsgsPrefix, uid ), 0, -1, ( err, msgs )=>
+		@redis.lrange @_getKey( @config.keyMsgsPrefix, uid ), 0, -1, ( err, msgs )->
 			if err
 				cb( err )
 				return
@@ -103,7 +103,7 @@ class RNMailBuffer extends require( "mpbasic" )()
 		if not count? or count > 0
 			# only relevent if count is undefined or gt 0
 			rM.push( [ "LTRIM", @_getKey( @config.keyMsgsPrefix, uid ), _range[ 0 ], _range[ 1 ] ] )
-		@redis.multi( rM ).exec ( err, results )=>
+		@redis.multi( rM ).exec ( err, results )->
 			if err
 				cb( err )
 				return
@@ -112,7 +112,7 @@ class RNMailBuffer extends require( "mpbasic" )()
 		return
 
 	_calcCheckTime: ( cb )=>
-		@_getRedisTime ( err, sec, ms )=>
+		@_getRedisTime ( err, sec, ms )->
 			if err
 				cb( err )
 				return
@@ -121,10 +121,10 @@ class RNMailBuffer extends require( "mpbasic" )()
 			_n.minutes( _last10Min ).seconds( 1 ).milliseconds( 0 )
 
 			cb( null, _n.valueOf() )
-			return 
+			return
 		return
 
-	_calcSendAt: ( now, interval, timezone="CET" )=>
+	_calcSendAt: ( now, interval, timezone="CET" )->
 		type = interval[0]
 		# handle daily
 		if type is "d"
@@ -169,16 +169,16 @@ class RNMailBuffer extends require( "mpbasic" )()
 		return _key
 
 	_getRedisTime: ( cb )=>
-		@redis.time ( err, time )=>
+		@redis.time ( err, time )->
 			if err
 				cb( err )
-				return		
+				return
 			
 			[ s, ns ] = time
 			ns = utils.lpad( ns, 6, "0" )[0..5]
 			ms = Math.round( (parseInt( s + ns , 10 ) / 1000 ) )
 
-			cb( null, parseInt( s, 10 ), ms ) 
+			cb( null, parseInt( s, 10 ), ms )
 			return
 		return
 

@@ -1,4 +1,4 @@
-_ = require( "lodash" )
+_map = require( "lodash/map" )
 
 RedisNotifications = require( "../." )
 utils = require( "../lib/utils" )
@@ -20,7 +20,7 @@ pickSendIv = utils.randPick( [ "i", "d1700", "d1600", "d0900", "p", "0" ] )
 nf.on "readUser", ( id, cb )->
 	# read the users settings
 	console.log "\n\n --- EXAMPLE - READ USER --- \nUSER_ID", id, "\n --- \n\n"
-	_user = 
+	_user =
 		id: id
 		firstname: "John"
 		lastname: "Do"
@@ -43,10 +43,10 @@ nf.on "readUser", ( id, cb )->
 	cb( null, _user )
 	return
 
-nf.on "getContent", ( type, user, creator, additional, cb )=>
+nf.on "getContent", ( type, user, creator, additional, cb )->
 	console.log "\n\n --- EXAMPLE - GET CONTENT --- \nTYPE:", type, "\n --- \nUSER:", user, "\n --- \nCREATOR:", creator, "\n --- \nADDITIONAL:", additional, "\n --- \n\n"
 
-	_content = 
+	_content =
 		subject: "This is my subject"
 		body: "This is the whole <b>content abc</b> of this message."
 		icon: additional.icon
@@ -56,25 +56,25 @@ nf.on "getContent", ( type, user, creator, additional, cb )=>
 	cb( null, _content )
 	return
 
-nf.on "createNotification", ( user, creator, message, cb )=>
+nf.on "createNotification", ( user, creator, message, cb )->
 	console.log "\n\n --- EXAMPLE - SEND NOTIFICATION --- \nID",  message.id, "\n --- \nUSER:", user, "\n --- \nMSG:", message, "\n --- \nCREATOR:", creator, "\n --- \n\n"
 	cb( null )
 	return
 
-nf.on "sendMail", ( user, messages, isReport, cb )=>
-	console.log "\n\n --- EXAMPLE - SEND MAIL --- \nIDs", _.pluck( messages, "id" ), "\n --- \nUSER:", user, "\n --- \nMSG:", messages,"\n --- \nISREPORT:", isReport, "\n --- \n\n"
+nf.on "sendMail", ( user, messages, isReport, cb )->
+	console.log "\n\n --- EXAMPLE - SEND MAIL --- \nIDs", _map( messages, "id" ), "\n --- \nUSER:", user, "\n --- \nMSG:", messages,"\n --- \nISREPORT:", isReport, "\n --- \n\n"
 	cb( null )
 	return
 
 pickPrio = utils.randPick( [ true, false ] )
 # define a creator and write some messages
-_creator = 
+_creator =
 	id: "ABCDE"
 	firstname: "William"
 	lastname: "Creator"
 	email: "william.create@example.com"
 
-_optionsMulti = 
+_optionsMulti =
 	type: "foo"
 	users: [ "ABCD1", "ABCD2", "ABCD3", "ABCD4", "ABCD5" ]
 	high: pickPrio()
@@ -85,7 +85,7 @@ _optionsMulti =
 _err = nf.createMulti( _creator, _optionsMulti )
 console.log( "\n\n --- EXAMPLE - ERROR --- \n", _err, "\n --- \n\n" ) if _err?
 
-_optionsSingle = 
+_optionsSingle =
 	type: "bar"
 	user: "WXYZ1"
 	high: pickPrio()
@@ -93,7 +93,7 @@ _optionsSingle =
 		sid: 1
 		icon: "user"
 
-nf.create _creator, _optionsSingle, ( err, data )=>
+nf.create _creator, _optionsSingle, ( err, data )->
 	console.log "\n\n --- EXAMPLE - create --- \n", err, data, "\n --- \n\n"
 	return
 

@@ -1,17 +1,17 @@
 # [utils](./utils.coffee.html)
-utils = require( "../utils" ) 
+utils = require( "../utils" )
 
 module.exports = new ( class MessageContentSchema extends require( "obj-schema" ) )(
-	subject: 
+	subject:
 		type: "string"
 		required: true
 
-	body: 
+	body:
 		type: "string"
 		required: true
 		sanitize: true
 
-	teaser: 
+	teaser:
 		type: "string"
 		sanitize: true
 		striphtml: true

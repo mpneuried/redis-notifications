@@ -1,17 +1,17 @@
 module.exports = new ( class CreateMutliSchema extends require( "obj-schema" ) )(
-	type: 
+	type:
 		type: "string"
 		required: true
 
-	users: 
+	users:
 		type: "array"
 		required: true
 
-	high: 
+	high:
 		type: "boolean"
 		default: false
 
-	additional: 
+	additional:
 		type: "object"
 		default: {}
 

@@ -1,6 +1,6 @@
 should = require('should')
 
-Module = require( "../." ) 
+Module = require( "../." )
 
 _moduleInst = null
 

@@ -1,16 +1,16 @@
 module.exports = new ( class CreateSchema extends require( "obj-schema" ) )(
-	type: 
+	type:
 		type: "string"
 		required: true
 
-	user: 
+	user:
 		required: true
 
-	high: 
+	high:
 		type: "boolean"
 		default: false
 
-	additional: 
+	additional:
 		type: "object"
 		default: {}
 

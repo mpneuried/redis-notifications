@@ -5,7 +5,8 @@
 # 
 
 # **npm modules**
-_ = require( "lodash" )
+_omit = require( "lodash/omit" )
+_map = require( "lodash/map" )
 
 # **internal modules**
 
@@ -41,7 +42,7 @@ class RNTasks extends require( "mpbasic" )()
 	dispatchUsers: ( data, next )=>
 		#@info "dispatchUsers", data
 		for user_id in data.users
-			@worker.send( "crNfcn", @extend( {}, _.omit( data, "users" ), user: user_id ) )
+			@worker.send( "crNfcn", @extend( {}, _omit( data, "users" ), user: user_id ) )
 
 		next()
 		return
@@ -100,7 +101,7 @@ class RNTasks extends require( "mpbasic" )()
 
 			# get the userdata out of the first and newest message
 			userdata = msgs[ 0 ].userdata
-			@worker.send "sndMsg", { user: userdata, messages: _.pluck( msgs, "message" ), composed: true }, ( err )=>
+			@worker.send "sndMsg", { user: userdata, messages: _map( msgs, "message" ), composed: true }, ( err )=>
 				if err
 					@main.emit "error", err
 					@warning "getMessageContent:sndMsg", err

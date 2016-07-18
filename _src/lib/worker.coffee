@@ -8,13 +8,13 @@
 
 # **npm modules**
 # [NPM:rsmq-worker](https://cdn.rawgit.com/mpneuried/rsmq-worker/master/_docs/README.md.html)
-RSMQWorker = require( "rsmq-worker" ) 
+RSMQWorker = require( "rsmq-worker" )
 
 class RNWorker extends require( "mpbasic" )()
 
 	# ## defaults
 	defaults: =>
-		@extend super, 
+		@extend super,
 
 			# **options.queuename** *String* The queuename to use for the worker
 			queuename: "notifications"
@@ -69,7 +69,7 @@ class RNWorker extends require( "mpbasic" )()
 		@emit "ready"
 		return
 
-	_customExceedCheck: ( msg )=>
+	_customExceedCheck: ( msg )->
 		if msg.message is "check"
 			return true
 		return false
@@ -77,7 +77,7 @@ class RNWorker extends require( "mpbasic" )()
 	_doCheck: ( next )=>
 		next( false )
 		@emit "checkMailBuffer"
-		return 
+		return
 
 	send: ( type, msg, cb )=>
 		@debug "send", type, msg

@@ -6,15 +6,15 @@
 # Main Module to init the notifications to redis
 
 # **npm modules**
-_ = require( "lodash" )
+_isFunction = require( "lodash/isFunction" )
 
 # **internal modules**
 # [RNWorker](./worker.coffee.html)
-Worker = require( "./worker" ) 
+Worker = require( "./worker" )
 # [RNTasks](./tasks.coffee.html)
-Tasks = require( "./tasks" ) 
+Tasks = require( "./tasks" )
 # [RNMailBuffer](./mailbuffer.coffee.html)
-MailBuffer = require( "./mailbuffer" ) 
+MailBuffer = require( "./mailbuffer" )
 
 # [validateCreator](./schemas/creator.coffee.html)
 validateCreator = require( "./schemas/creator" )
@@ -31,7 +31,7 @@ class RedisNotifications extends require( "mpbasic" )()
 
 	# ## defaults
 	defaults: =>
-		@extend super, 
+		@extend super,
 			# **options.maxBufferReadCount** *Number* Count of users to read at once to send mails
 			maxBufferReadCount: 100
 
@@ -98,7 +98,7 @@ class RedisNotifications extends require( "mpbasic" )()
 
 		options.creator = creator
 
-		if _.isFunction( cb )
+		if _isFunction( cb )
 			@worker.send "crNfcns", options, ( err, qmid )->
 				if err
 					cb( err )
@@ -142,7 +142,7 @@ class RedisNotifications extends require( "mpbasic" )()
 
 
 	ERRORS: =>
-		return @extend {}, super, 
+		return @extend {}, super,
 			"EMISSINGLISTENER": [ 404, "Missing Event Listener. Please make sure you've added a event listener to `<%= evname %>`" ]
 
 #export this class
