@@ -35,7 +35,7 @@ This is all done within a queuing solution. so it's scalable and failsafe.
     // listen to errors
     nf.on( "error", function( err ){});
 
-    // Hock to read details of an user
+    // Hook to read details of an user
     nf.on( "readUser", function( user_id, cb ){ /* ... */ });
 
     // Hook to generate the message content for the notification and the mail
