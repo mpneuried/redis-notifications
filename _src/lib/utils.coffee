@@ -99,6 +99,8 @@ module.exports =
 	@return { String } the truncated string
 	###
 	truncate: ( str, len = 100, add = "...", tolerance = 5 )->
+		if not str?
+			return ""
 		if str.length > ( len * ( 1 + tolerance/100 ) )
 			return str.substr( 0, str.indexOf( " ", len ) ) + ( add or "" )
 		return str

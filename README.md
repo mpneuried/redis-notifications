@@ -370,6 +370,7 @@ It's up to you to implement the DB read and Write methods and do the notificatio
 ## Release History
 |Version|Date|Description|
 |:--:|:--:|:--|
+|0.2.1|2016-10-27|Small bugfix with default value (Thanks to [Anton Rau](https://github.com/plankter) for [#3](https://github.com/mpneuried/redis-notifications/issues/3)). Updated dependencies|
 |0.2.0|2016-07-18|Updated dev env and dependencies|
 |0.1.1|2015-01-30|Logo update|
 |0.1.0|2015-01-30|Added docs and optimized code and API|

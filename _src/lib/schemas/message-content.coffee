@@ -16,6 +16,6 @@ module.exports = new ( class MessageContentSchema extends require( "obj-schema" 
 		sanitize: true
 		striphtml: true
 		default: ( data, def )->
-			return utils.truncate( data.body, 100 )
+			return utils.truncate( data?.body or "", 100 )
 
 , name: "messagecontent" ).validateCb

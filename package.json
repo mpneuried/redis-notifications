@@ -1,6 +1,6 @@
 {
   "name": "redis-notifications",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A redis based notification engine. It implements the rsmq-worker to savely create notifications and recurring reports",
   "keywords": [],
   "homepage": "https://github.com/mpneuried/redis-notifications",
@@ -27,14 +27,14 @@
     "rsmq-worker": "0.5.x",
     "lodash": "4.x",
     "moment-timezone": "0.5.x",
-    "obj-schema": "1.1.x"
+    "obj-schema": "1.2.x"
   },
   "devDependencies": {
-    "should": "9.x",
+    "should": "11.x",
     "grunt": "1.0.x",
     "grunt-contrib-watch": "1.0.x",
     "grunt-contrib-coffee": "1.x",
-    "grunt-include-replace": "4.x",
+    "grunt-include-replace": "5.x",
     "grunt-mocha-cli": "2.x",
     "grunt-contrib-clean": "1.x"
   }
