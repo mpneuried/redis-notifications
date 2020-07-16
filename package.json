@@ -36,6 +36,6 @@
     "grunt-contrib-coffee": "1.x",
     "grunt-include-replace": "5.x",
     "grunt-mocha-cli": "2.x",
-    "grunt-contrib-clean": "1.x"
+    "grunt-contrib-clean": "2.x"
   }
 }
