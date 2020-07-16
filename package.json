@@ -27,7 +27,7 @@
     "rsmq-worker": "0.5.x",
     "lodash": "4.x",
     "moment-timezone": "0.5.x",
-    "obj-schema": "1.2.x"
+    "obj-schema": "1.6.x"
   },
   "devDependencies": {
     "should": "11.x",
