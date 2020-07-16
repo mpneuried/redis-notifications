@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "should": "11.x",
-    "grunt": "1.0.x",
+    "grunt": "1.2.x",
     "grunt-contrib-watch": "1.0.x",
     "grunt-contrib-coffee": "1.x",
     "grunt-include-replace": "5.x",
